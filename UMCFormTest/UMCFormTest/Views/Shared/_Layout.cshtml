@@ -1,0 +1,90 @@
+﻿@using UMCFormTest.Controllers
+@using UMCFormTest.Database
+@{
+
+    STAFF user = (STAFF)HttpContext.Current.Session[Constant.SESSION_LOGIN];
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Bài kiểm tra</title>
+    <link href="~/Content/common.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+
+        <div class="row mt-5">
+            <div class="col-1">
+                <img src="~/Resource/logo.png" alt="" class="mr-1">
+            </div>
+            <div class="col">
+                <h3 class="text-center">CÔNG TY TNHH ĐIỆN TỬ UMC VIỆT NAM</h3>
+            </div>
+            <div class="col-2">
+                <button class="border-0 btn-light p-2 ra dropdown-toggle rounded" type="button" id="userDropdown"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-user fa-fw"></i>
+                    @{
+                        if (user != null)
+                        {
+                            <span>
+                                @user.FullName
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="lang" key="Username"></span>
+                        }
+                    }
+
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    @*<a class="dropdown-item" href="#!">Settings</a>
+                        <a class="dropdown-item" href="#!">Activity Log</a>*@
+                    @*<div class="dropdown-divider"></div>*@
+                    <a class="dropdown-item lang" href="@Url.Action("Logout", "Home")" key="logout">Đăng xuất</a>
+                </div>
+            </div>
+            <div class="col-1">
+
+                <button class="border-0 btn-light p-2 ra dropdown-toggle rounded" type="button" id="userDropdown"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                    <img src="~/Resource/vietnam.png" alt="" class="mr-1 icon-lang"><span class="text-lang">Tiếng Việt</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                    <a id="vi" class="dropdown-item translate" href="#!">
+                        <img src="~/Resource/vietnam.png" alt="">
+                        Tiếng Việt
+
+                    </a>
+                    <a id="en" class="dropdown-item translate" href="#!">
+                        <img src="~/Resource/united-states.png"
+                             alt="">
+                        Tiếng Anh
+
+                    </a>
+                    <a id="ja" class="dropdown-item translate" href="#!">
+                        <img src="~/Resource/japan.png" alt="">
+                        Tiếng Nhật
+
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+        @RenderBody()
+    </div>
+    <script src="~/Scripts/jquery-3.5.1.slim.min.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+    <script src="~/Scripts/lang.js"></script>
+    <script src="~/Scripts/script.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

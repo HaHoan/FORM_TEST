@@ -1,0 +1,86 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using UMCFormTest.Controllers
+@using UMCFormTest.Database
+@model UMCFormTest.Database.EXAM
+@{
+
+    STAFF user = (STAFF)HttpContext.Current.Session[Constant.SESSION_LOGIN];
+}
+
+
+@if (user != null && Model != null)
+{
+    <form action="Submit" method="post" id="submit-form">
+
+        <div class="row mt-5 border border-dark">
+            <div class="col-5 border-right border-dark">
+                <div class="d-inline lang" key="name">Họ và tên:</div>
+                <div class="d-inline">@user.FullName</div>
+            </div>
+            <div class="col-7">
+                <div class="d-inline lang" key="code">Họ và tên:</div>
+                <div class="d-inline mr-5">@user.StaffCode</div>
+                <div class="d-inline lang ml-5" key="dept"></div>
+                <div class="d-inline mr-5">@user.Dept</div>
+            </div>
+        </div>
+        <div class="row border-left border-right border-bottom border-dark">
+            <div class="col-5 border-right border-dark">
+                <div class="d-inline lang" key="mark">Họ và tên:</div>
+                <div class="d-inline">@Model.Target </div>
+            </div>
+            <div class="col-4">
+                <div class="d-inline lang" key="review">Họ và tên:</div>
+                <div class="d-inline ml-5">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="checkboxOK" name="review" value="OK">
+                        <label class="form-check-label" for="checkboxOK">OK</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="checkboxNG" name="review" value="NG">
+                        <label class="form-check-label" for="checkboxOK">NG</label>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-3 border-left border-dark">
+                <div class="d-inline lang" key="date">Họ và tên:</div>
+                <div class="d-inline">@(DateTime.Now)</div>
+            </div>
+        </div>
+        <h4 class="lang text-center mt-5 font-italic font-weight-bold" style="  text-decoration: underline;" key="title"></h4>
+        <h4 class=" text-center font-italic font-weight-bold">@Model.Name</h4>
+        <input type="hidden" name="ID_Exam" value="@Model.ID" />
+        <input type="hidden" name="StaffCode" value="@user.StaffCode" />
+        <input type="hidden" name="StaffCode" value="@user.StaffCode" />
+        <input type="hidden" name="DateTest" value="@(DateTime.Now)" />
+        @{
+            var i = 0;
+            foreach (var question in Model.QUESTIONs)
+            {
+
+                i = i + 1;
+
+                <div class="row mt-5">
+                    <p>Câu hỏi @(i): @question.Question1</p>
+                    <input type="hidden" id=@("question_" + i) value="@question.ID">
+                    <textarea class="form-control" rows="4" name=@("answer_" + i)></textarea>
+                </div>
+
+            }
+        }
+
+
+        <input type="hidden" id="answers" name="answers" />
+
+        <div class="row mt-5 mb-5">
+            <button type="button" id="submit1" class="btn btn-success lang mr-auto ml-auto mb-5" style="width:25%" key="submit"> </button>
+        </div>
+
+    </form>
+}
+
+
