@@ -7,6 +7,15 @@
         }
         
     })
+    $('#point').keydown(function (e) {
+        if (e.keyCode == 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+    $(".type_number").keypress(function (e) {
+        return onlyNumber(e)
+    });
 })
 function getAnswers() {
     var answers = []
@@ -22,4 +31,11 @@ function getAnswers() {
         answers.push(obj)
     })
     return answers;
+}
+function onlyNumber(e) {
+    if (/\d+|,+|[/b]+|-+/i.test(e.key)) {
+        return true
+    } else {
+        return false;
+    }
 }

@@ -26,10 +26,10 @@ namespace UMCFormTest.Database
         }
     
         public virtual DbSet<QUESTION> QUESTIONs { get; set; }
-        public virtual DbSet<STAFF> STAFFs { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<EXAM> EXAMs { get; set; }
         public virtual DbSet<USER_TEST> USER_TEST { get; set; }
         public virtual DbSet<USER_TEST_DETAIL> USER_TEST_DETAIL { get; set; }
+        public virtual DbSet<STAFF> STAFFs { get; set; }
     }
 }

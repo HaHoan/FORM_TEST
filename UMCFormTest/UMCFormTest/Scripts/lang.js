@@ -6,13 +6,13 @@
 })
 function changeLanguage(lang) {
     if (lang == "en") {
-        $(".icon-lang").attr('src', "../Resource/united-states.png");
+        $(".icon-lang").attr('src', "/Resource/united-states.png");
         $(".text-lang").text("English")
     } else if (lang == "vi") {
-        $(".icon-lang").attr('src', "../Resource/vietnam.png");
+        $(".icon-lang").attr('src', "/Resource/vietnam.png");
         $(".text-lang").text("Tiếng Việt")
     } else if (lang == "ja") {
-        $(".icon-lang").attr('src', "../Resource/japan.png");
+        $(".icon-lang").attr('src', "/Resource/japan.png");
         $(".text-lang").text("日本語")
     }
     $(".lang").each(function (index, element) {
@@ -28,9 +28,9 @@ $(".translate").click(function () {
 });
 var arrLang = {
     "en": {
-        "name": "Full Name:",
-        "code": "Staff Code:",
-        "dept": "Department:",
+        "name": "Full Name",
+        "code": "Staff Code",
+        "dept": "Department",
         "mark": "Mark     :",
         "review": "Review:",
         "date": "Date",
@@ -41,12 +41,18 @@ var arrLang = {
         "pass": "Password",
         "code": "StaffCode:",
         "success": "You submitted successfully!",
-        "error":"Error"
+        "error": "Error",
+        "reviewer": "Mark the test",
+        "add_question": "Add New Exam",
+        "test": "Exam",
+        "done": "Done",
+        "point": "Point",
+        "answer_question":"Do exam"
     },
     "vi": {
-        "name": "Họ và tên:",
-        "code": "Mã nhân viên:",
-        "dept": "Bộ phận:",
+        "name": "Họ và tên",
+        "code": "Mã nhân viên",
+        "dept": "Bộ phận",
         "mark": "Điểm đạt :",
         "review": "Đánh giá",
         "date": "Ngày Thi:",
@@ -55,9 +61,14 @@ var arrLang = {
         "logout": "Đăng xuất",
         "login": "Đăng nhập",
         "pass": "Mật khẩu",
-        "code": "Mã nhân viên:",
         "success": "Bạn đã nộp thành công!",
-        "error": "Có lỗi sảy ra"
+        "error": "Có lỗi sảy ra",
+        "reviewer": "Chấm điểm bài thi",
+        "add_question": "Thêm bài thi mới",
+        "test": "Bài thi",
+        "done": "Xong",
+        "point": "Điểm",
+        "answer_question": "Làm bài thi"
     },
     "ja": {
         "name": "名前   :",
@@ -73,6 +84,12 @@ var arrLang = {
         "pass": "パスワード",
         "code": "社員コードー",
         "success": "You submitted successfully!",
-        "error": "Error"
+        "error": "Error",
+        "reviewer": "Mark the test",
+        "add_question": "Add New Exam",
+        "test": "Exam",
+        "done": "Done",
+        "point": "Point",
+        "answer_question": "Do exam"
     }
 };

@@ -37,7 +37,7 @@ namespace UMCFormTest.Controllers
         {
             using (var db = new UMC_TESTEntities())
             {
-                var userTest = db.USER_TEST.Include("EXAM").Include("USER_TEST_DETAIL").Where(m => m.ID == Id).FirstOrDefault();
+                var userTest = db.USER_TEST.Include("EXAM").Include("USER_TEST_DETAIL").Include("STAFF").Where(m => m.ID == Id).FirstOrDefault();
                 userTest.USER_TEST_DETAIL = db.USER_TEST_DETAIL.Include("QUESTION").Where(m => m.ID_USER_TEST == Id).ToList();
                 return View(userTest);
             }
@@ -79,6 +79,10 @@ namespace UMCFormTest.Controllers
                                 FullName = staff.FullName,
                                 Password = "umcvn"
                             };
+                            if (user.Dept == "GA")
+                            {
+                                user.IsReviewer = true;
+                            }
                             db.STAFFs.Add(user);
                             db.SaveChanges();
                             SessionHelper.Set(Constant.SESSION_LOGIN, user);
@@ -151,6 +155,43 @@ namespace UMCFormTest.Controllers
                 }
             }
             catch (Exception e)
+            {
+                return View("Error");
+            }
+
+        }
+
+        public ActionResult ListTest()
+        {
+            using (var db = new UMC_TESTEntities())
+            {
+                var list = db.USER_TEST.Include("EXAM").Include("STAFF").Include("USER_TEST_DETAIL").ToList();
+                return View(list);
+            }
+
+        }
+
+        [HttpPost]
+
+        public ActionResult Mark(int point, string review, int ID_USER_TEST)
+        {
+            try
+            {
+                using (var db = new UMC_TESTEntities())
+                {
+                    var userTest = db.USER_TEST.Where(m => m.ID == ID_USER_TEST).FirstOrDefault();
+                    if (userTest == null)
+                    {
+                        return View("Error");
+                    }
+                    userTest.Mark = point;
+                    userTest.Review = review;
+                    db.SaveChanges();
+
+                }
+                return RedirectToAction("ListTest");
+            }
+            catch (Exception)
             {
                 return View("Error");
             }

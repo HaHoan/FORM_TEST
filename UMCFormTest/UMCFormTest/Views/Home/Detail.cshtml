@@ -10,59 +10,147 @@
 
     STAFF user = (STAFF)HttpContext.Current.Session[Constant.SESSION_LOGIN];
 }
-
-<div class="row mt-5 border border-dark">
-    <div class="col-5 border-right border-dark">
-        <div class="d-inline lang" key="name">Họ và tên:</div>
-        <div class="d-inline">@user.FullName</div>
-    </div>
-    <div class="col-7">
-        <div class="d-inline lang" key="code">Họ và tên:</div>
-        <div class="d-inline mr-5">@user.StaffCode</div>
-        <div class="d-inline lang ml-5" key="dept"></div>
-        <div class="d-inline mr-5">@user.Dept</div>
-    </div>
-</div>
-<div class="row border-left border-right border-bottom border-dark">
-    <div class="col-5 border-right border-dark">
-        <div class="d-inline lang" key="mark">Họ và tên:</div>
-        <div class="d-inline">@Model.EXAM.Target </div>
-    </div>
-    <div class="col-4">
-        <div class="d-inline lang" key="review">Họ và tên:</div>
-        <div class="d-inline ml-5">
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="checkboxOK" name="review" value="OK">
-                <label class="form-check-label" for="checkboxOK">OK</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="checkboxNG" name="review" value="NG">
-                <label class="form-check-label" for="checkboxOK">NG</label>
-            </div>
-        </div>
-
-    </div>
-    <div class="col-3 border-left border-dark">
-        <div class="d-inline lang" key="date">Họ và tên:</div>
-        <div class="d-inline">@Model.DateTest.ToString()</div>
-    </div>
-</div>
-<h4 class="lang text-center mt-5 font-italic font-weight-bold" style="  text-decoration: underline;" key="title"></h4>
-<h4 class=" text-center font-italic font-weight-bold">@Model.EXAM.Name</h4>
-
-@{
-    var i = 0;
-    foreach (var answer in Model.USER_TEST_DETAIL)
+@if (user != null && Model != null)
+{
+    using (Html.BeginForm("Mark", "Home", FormMethod.Post))
     {
-
-        i = i + 1;
-
-        <div class="row mt-5">
-            <p>Câu hỏi @(i): @answer.QUESTION.Question1</p>
-            <textarea class="form-control bg-white" rows="4" readonly>@answer.ANSWER</textarea>
+        <input type="hidden" name="ID_USER_TEST" value="@Model.ID" />
+        <div class="row mt-5 border border-dark">
+            <div class="col-5 border-right border-dark">
+                <div class="d-inline lang" key="name">Họ và tên:</div>
+                <div class="d-inline">@Model.STAFF.FullName</div>
+            </div>
+            <div class="col-7">
+                <div class="d-inline lang" key="code">Họ và tên:</div>
+                <div class="d-inline mr-5">@Model.STAFF.StaffCode</div>
+                <div class="d-inline lang ml-5" key="dept"></div>
+                <div class="d-inline mr-5">@Model.STAFF.Dept</div>
+            </div>
         </div>
+
+
+        if (user.StaffCode != Model.STAFF.StaffCode && Model.Mark == null)
+        {
+            <div class="row border-left border-right border-bottom border-dark">
+                <div class="col-5 border-right border-dark ">
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="d-inline lang" key="mark">Họ và tên:</div>
+                            <div class="d-inline">@Model.EXAM.Target </div>
+                        </div>
+                        <div class="col form-inline">
+                            <input class="point type_number border-bottom" name="point" id="point" />
+                            <span class="lang ml-2" key="point"></span>
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="col-3">
+                    <div class="d-inline lang" key="review">Họ và tên:</div>
+                    <div class="d-inline ml-5">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="checkboxOK" name="review" value="OK" checked>
+                            <label class="form-check-label" for="checkboxOK">OK</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="checkboxNG" name="review" value="NG">
+                            <label class="form-check-label" for="checkboxOK">NG</label>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-1">
+
+                    <button type="submit" id="reviewBtn" class=" btn-success text-white lang btnDone rounded"> <i class="fa fa-check"></i><span key="done" class="lang"></span> </button>
+                </div>
+
+
+                <div class="col-3 border-left border-dark">
+                    <div class="d-inline lang" key="date">Họ và tên:</div>
+                    <div class="d-inline">@Model.DateTest.ToString()</div>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="row border-left border-right border-bottom border-dark">
+                <div class="col-5 border-right border-dark">
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-inline lang" key="mark">Họ và tên:</div>
+                            <div class="d-inline">@Model.EXAM.Target </div>
+                        </div>
+                        @if (Model.Mark > 0)
+                        {
+                            <div class="col form-inline">
+                                <span>@Model.Mark</span>
+                                <span class="lang ml-2" key="point"></span>
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="col-4">
+                    <div class="d-inline lang" key="review">Họ và tên:</div>
+                    <div class="d-inline ml-5">
+                        @if (Model.Review == "OK")
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="checkboxOK" name="review" value="OK" checked>
+                                <label class="form-check-label" for="checkboxOK">OK</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="checkboxNG" name="review" value="NG">
+                                <label class="form-check-label" for="checkboxOK">NG</label>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="checkboxOK" name="review" value="OK">
+                                <label class="form-check-label" for="checkboxOK">OK</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" id="checkboxNG" name="review" value="NG" checked>
+                                <label class="form-check-label" for="checkboxOK">NG</label>
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+                <div class="col-3 border-left border-dark">
+                    <div class="d-inline lang" key="date">Họ và tên:</div>
+                    <div class="d-inline">@Model.DateTest.ToString()</div>
+                </div>
+            </div>
+        }
+        <h4 class="lang text-center mt-5 font-italic font-weight-bold" style="  text-decoration: underline;" key="title"></h4>
+        <h4 class=" text-center font-italic font-weight-bold">@Model.EXAM.Name</h4>
+
+
+        var i = 0;
+        foreach (var answer in Model.USER_TEST_DETAIL)
+        {
+
+            i = i + 1;
+
+            <div class="row mt-5">
+                <p>Câu hỏi @(i): @answer.QUESTION.Question1</p>
+                <textarea class="form-control bg-white" rows="4" readonly>@answer.ANSWER</textarea>
+            </div>
+
+        }
+        <input type="hidden" id="answers" name="answers" />
+
+
+        <br />
 
     }
 }
-<br/>
-

@@ -14,9 +14,19 @@ namespace UMCFormTest.Database
     
     public partial class STAFF
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public STAFF()
+        {
+            this.USER_TEST = new HashSet<USER_TEST>();
+        }
+    
         public string StaffCode { get; set; }
         public string FullName { get; set; }
         public string Dept { get; set; }
         public string Password { get; set; }
+        public Nullable<bool> IsReviewer { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<USER_TEST> USER_TEST { get; set; }
     }
 }

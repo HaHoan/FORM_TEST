@@ -41,3 +41,23 @@ form {
     font-size: 13px;
     margin-top: 20px;
 }
+table th, td {
+    /*padding: 2px !important;*/
+    vertical-align: middle !important;
+    text-align: center !important;
+    font-size:13px;
+}
+.point {
+    padding: 1px !important;
+    vertical-align: middle !important;
+    text-align: right !important;
+    border: none;
+    margin-bottom:2px;
+}
+.btnDone {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    border: none;
+    vertical-align: middle !important;
+}

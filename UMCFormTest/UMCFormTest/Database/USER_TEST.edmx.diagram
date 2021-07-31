@@ -6,7 +6,6 @@
     <edmx:Diagrams>
       <Diagram DiagramId="21595b5ab9624f1e857ceeb12b80d892" Name="Diagram1">
         <EntityTypeShape EntityType="UMC_TESTModel.QUESTION" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="UMC_TESTModel.STAFF" Width="1.5" PointX="5.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="UMC_TESTModel.sysdiagram" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="UMC_TESTModel.EXAM" Width="1.5" PointX="0.75" PointY="2.75" />
         <AssociationConnector Association="UMC_TESTModel.FK_EXAMQUESTION" />
@@ -15,6 +14,8 @@
         <EntityTypeShape EntityType="UMC_TESTModel.USER_TEST_DETAIL" Width="1.5" PointX="5.25" PointY="3.125" />
         <AssociationConnector Association="UMC_TESTModel.FK_DETAILQUESTION1" />
         <AssociationConnector Association="UMC_TESTModel.FK_DETAILTEST" />
+        <EntityTypeShape EntityType="UMC_TESTModel.STAFF" Width="1.5" PointX="5.375" PointY="6.875" />
+        <AssociationConnector Association="UMC_TESTModel.FK_TESTSTAFF" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
