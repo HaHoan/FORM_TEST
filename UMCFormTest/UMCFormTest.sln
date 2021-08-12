@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.28307.1500
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UMCFormTest", "UMCFormTest\UMCFormTest.csproj", "{94931CF8-C838-4021-81CE-7268BDA03160}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OQC", "..\..\..\..\C#\UMC_OQC\OQC\OQC\OQC.csproj", "{764FD23F-1855-4601-871B-8DC94A0956E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{94931CF8-C838-4021-81CE-7268BDA03160}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94931CF8-C838-4021-81CE-7268BDA03160}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94931CF8-C838-4021-81CE-7268BDA03160}.Release|Any CPU.Build.0 = Release|Any CPU
+		{764FD23F-1855-4601-871B-8DC94A0956E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{764FD23F-1855-4601-871B-8DC94A0956E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{764FD23F-1855-4601-871B-8DC94A0956E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{764FD23F-1855-4601-871B-8DC94A0956E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,21 +15,29 @@ namespace UMCFormTest.Controllers
         public STAFF user = SessionHelper.Get<STAFF>(Constant.SESSION_LOGIN);
         public ActionResult Index()
         {
-            if (user == null) return View("Login");
-            using (var db = new UMC_TESTEntities())
+            try
             {
-                var exam = db.EXAMs.Include("QUESTIONs").Where(m => m.IsCurrent == true).FirstOrDefault();
-                var userTest = db.USER_TEST.Where(m => m.ID_Exam == exam.ID && m.StaffCode == user.StaffCode).FirstOrDefault();
-                if (userTest == null)
+                if (user == null) return View("Login");
+                using (var db = new UMC_TESTEntities())
                 {
-                    return View(exam);
-                }
-                else
-                {
-                    return RedirectToAction("Detail", new { Id = userTest.ID });
-                }
+                    var exam = db.EXAMs.Include("QUESTIONs").OrderByDescending(m => m.DateCreate).Where(m => m.IsCurrent == true).FirstOrDefault();
+                    var userTest = db.USER_TEST.Where(m => m.ID_Exam == exam.ID && m.StaffCode == user.StaffCode).FirstOrDefault();
+                    if (userTest == null)
+                    {
+                        return View(exam);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Detail", new { Id = userTest.ID });
+                    }
 
+                }
             }
+            catch (Exception)
+            {
+                return View();
+            }
+
 
         }
 
@@ -47,6 +55,56 @@ namespace UMCFormTest.Controllers
 
             return View();
         }
+        public ActionResult Register()
+        {
+            return View();
+        }
+        public ActionResult ChangePassword()
+        {
+            ViewBag.OldPassword = user.Password;
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangePassword(STAFF member, string old_Password, string reenter_Password)
+        {
+            try
+            {
+                using (var db = new UMC_TESTEntities())
+                {
+                    var u = db.STAFFs.Where(m => m.StaffCode == user.StaffCode).FirstOrDefault();
+                    if (u != null)
+                    {
+                        if (old_Password != u.Password)
+                        {
+                            ModelState.AddModelError("name", "Mật khẩu cũ nhập sai!");
+                            return View();
+                        }
+                        else if (member.Password != reenter_Password)
+                        {
+                            ModelState.AddModelError("name", "Nhập lại mật khẩu không trùng khớp!");
+                            return View();
+                        }
+
+                        u.Password = member.Password;
+                        db.SaveChanges();
+                        return RedirectToAction("Login", "Home");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Error", "Không tồn tại user này!");
+                        return View("Login");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("Error", "Kiểm tra lại Code hoặc Password!");
+                return View("Login");
+            }
+
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Login(STAFF member)
@@ -63,43 +121,56 @@ namespace UMCFormTest.Controllers
                     }
                     else
                     {
-                        GA_UMCEntities gaDB = new GA_UMCEntities();
-                        var staff = gaDB.sp_Get_All_Staff_2().Where(m => m.StaffCode == member.StaffCode).FirstOrDefault();
-                        if (staff == null)
-                        {
-                            ModelState.AddModelError("Error", "Kiểm tra lại Code hoặc Password!");
-                            return View("Index");
-                        }
-                        else
-                        {
-                            user = new STAFF()
-                            {
-                                StaffCode = staff.StaffCode,
-                                Dept = staff.DeptCode,
-                                FullName = staff.FullName,
-                                Password = "umcvn"
-                            };
-                            if (user.Dept == "GA")
-                            {
-                                user.IsReviewer = true;
-                            }
-                            db.STAFFs.Add(user);
-                            db.SaveChanges();
-                            SessionHelper.Set(Constant.SESSION_LOGIN, user);
-                            return RedirectToAction("Index", "Home");
-                        }
+                        ModelState.AddModelError("Error", "Kiểm tra lại Code hoặc Password!");
+                        return View();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError("Error", "Kiểm tra lại Code hoặc Password!");
+                return View();
+            }
 
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Register(STAFF member)
+        {
+            try
+            {
+                using (var db = new UMC_TESTEntities())
+                {
+                    var user = db.STAFFs.Where(m => m.StaffCode == member.StaffCode).FirstOrDefault();
+                    if (user == null)
+                    {
+                        user = new STAFF()
+                        {
+                            StaffCode = member.StaffCode,
+                            Password = member.Password,
+                            Dept = member.Dept,
+                            FullName = member.FullName,
+                            IsReviewer = member.IsReviewer
+                        };
+                        db.STAFFs.Add(user);
+                        db.SaveChanges();
+                        ViewBag.Message = "Bạn đã tạo xong user " + user.StaffCode + "!";
+                        return View("Success");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Error", "User này đã đăng kí rồi!");
+                        return View("Index");
                     }
                 }
             }
             catch (Exception)
             {
-                ModelState.AddModelError("Error", "Kiểm tra lại Code hoặc Password!");
+                ModelState.AddModelError("Error", "Có lỗi xảy ra!");
                 return View("Index");
             }
 
         }
-
         public ActionResult Logout()
         {
             if (SessionHelper.Get<STAFF>(Constant.SESSION_LOGIN) != null)
@@ -150,7 +221,7 @@ namespace UMCFormTest.Controllers
                         db.USER_TEST_DETAIL.Add(userTestDetail);
                         db.SaveChanges();
                     }
-
+                    ViewBag.Message = "Bạn đã hoàn thành xong bài thi!";
                     return View("Success");
                 }
             }
@@ -163,6 +234,7 @@ namespace UMCFormTest.Controllers
 
         public ActionResult ListTest()
         {
+            if (user == null) return View("Login");
             using (var db = new UMC_TESTEntities())
             {
                 var list = db.USER_TEST.Include("EXAM").Include("STAFF").Include("USER_TEST_DETAIL").ToList();
@@ -177,6 +249,7 @@ namespace UMCFormTest.Controllers
         {
             try
             {
+                if (user == null) return View("Login");
                 using (var db = new UMC_TESTEntities())
                 {
                     var userTest = db.USER_TEST.Where(m => m.ID == ID_USER_TEST).FirstOrDefault();
@@ -193,6 +266,73 @@ namespace UMCFormTest.Controllers
             }
             catch (Exception)
             {
+                return View("Error");
+            }
+
+        }
+
+        public ActionResult ListExam()
+        {
+            if (user == null) return View("Login");
+            using (var db = new UMC_TESTEntities())
+            {
+                var list = db.EXAMs.ToList();
+                return View(list);
+            }
+        }
+
+        [HttpPost]
+
+        public ActionResult AddExam(string name_exam_vi, string name_exam_ja, string list_question, string isCurrent, string target)
+        {
+            try
+            {
+                if (user == null) return View("Login");
+                using (var db = new UMC_TESTEntities())
+                {
+                    var list = JsonConvert.DeserializeObject<List<Question>>(list_question);
+                    var exam = new EXAM()
+                    {
+                        Name = JsonConvert.SerializeObject(new Question()
+                        {
+                            vi = name_exam_vi,
+                            ja = name_exam_ja
+                        }),
+                        DateCreate = DateTime.Now,
+                        IsCurrent = isCurrent == "true" ? true : false,
+                        Target = int.Parse(target)
+                    };
+                    var examDb = db.EXAMs.Add(exam);
+                    db.SaveChanges();
+                    if (examDb.IsCurrent == true)
+                    {
+                        var listExam = db.EXAMs.Where(m => m.IsCurrent == true && m.ID != examDb.ID).ToList();
+                        foreach (var e in listExam)
+                        {
+                            e.IsCurrent = false;
+                            db.SaveChanges();
+                        }
+                    }
+                    foreach (var question in list)
+                    {
+                        var ques = new QUESTION()
+                        {
+                            ID_EXAM = examDb.ID,
+                            Question1 = JsonConvert.SerializeObject(question),
+                            DateCreate = DateTime.Now
+                        };
+                        db.QUESTIONs.Add(ques);
+                        db.SaveChanges();
+                    }
+                    return RedirectToAction("ListExam");
+
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                ViewBag.Messagee = e.Message.ToString();
                 return View("Error");
             }
 

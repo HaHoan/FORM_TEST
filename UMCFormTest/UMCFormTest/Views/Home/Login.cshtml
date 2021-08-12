@@ -15,11 +15,15 @@
     <div class="global-container">
         <div class="card login-form">
             <div class="card-body">
-                <h3 class="card-title text-center lang" key="login">ĐĂNG NHẬP</h3>
+                <div class="d-inline text-center">
+                    <img src="~/Resource/logo.png" alt="" class="mr-1">
+                    <span class="ml-5 font-weight-bold lang text-uppercase" key="login" style="font-size:20px;"></span>
+                </div>
                 <div class="card-text">
                     @using (Html.BeginForm("Login", "Home", FormMethod.Post))
                     {
                         @Html.AntiForgeryToken();
+                        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
                         <div class="form-group">
                             <label class="lang" key="code">Staff Code</label>
                             @Html.TextBoxFor(m => m.StaffCode, new { @class = "form-control", placeholder = "Staff Code", @required = "required" })
@@ -28,13 +32,14 @@
                             <label class="lang" key="pass">Password</label>
                             @Html.TextBoxFor(m => m.Password, new { @class = "form-control", placeholder = "Password", @type = "password", @required = "required" })
                         </div>
-                        <button type="submit" class="btn btn-success btn-block lang" key="login">Đăng nhập</button>
+                        <button type="submit" class="btn btn-success btn-block lang col" key="login">Đăng nhập</button>
 
                     }
                 </div>
             </div>
         </div>
     </div>
+
     <script src="~/Scripts/jquery-3.5.1.slim.min.js"></script>
     <script src="~/Scripts/bootstrap.bundle.min.js"></script>
     <script src="~/Scripts/lang.js"></script>

@@ -27,9 +27,9 @@ namespace UMCFormTest.Database
         public int ID_Exam { get; set; }
         public int ID { get; set; }
     
+        public virtual STAFF STAFF { get; set; }
         public virtual EXAM EXAM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<USER_TEST_DETAIL> USER_TEST_DETAIL { get; set; }
-        public virtual STAFF STAFF { get; set; }
     }
 }

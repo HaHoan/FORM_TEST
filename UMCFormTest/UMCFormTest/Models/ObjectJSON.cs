@@ -10,4 +10,10 @@ namespace UMCFormTest.Models
         public int index { get; set; }
         public string value { get; set; }
     }
+    public class Question
+    {
+        public int index { get; set; }
+        public string vi { get; set; }
+        public string ja { get; set; }
+    }
 }

@@ -17,74 +17,81 @@
     @RenderSection("styles", required: false)
 </head>
 <body>
-    <div class="container">
-
-        <div class="row mt-5">
-            <div class="col-1">
-                <img src="~/Resource/logo.png" alt="" class="mr-1">
-            </div>
-            <div class="col">
-                <h3 class="text-center">CÔNG TY TNHH ĐIỆN TỬ UMC VIỆT NAM</h3>
-            </div>
-            <div class="col-3">
-                <button class="border-0 btn-light p-2 ra dropdown-toggle rounded" type="button" id="userDropdown"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-user fa-fw"></i>
-                    @{
-                        if (user != null)
-                        {
-                            <span>
-                                @user.FullName
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="lang" key="Username"></span>
-                        }
-                    }
-
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    @if (user != null && user.IsReviewer == true)
-                    {
-                        <a class="dropdown-item lang" href="@Url.Action("ListTest", "Home")" key="reviewer"></a>
-                        <a class="dropdown-item lang" href="#!" key="add_question">Activity Log</a>
-                        <a class="dropdown-item lang" href="@Url.Action("Index", "Home")"  key="answer_question">Activity Log</a>
-                    }
-
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item lang" href="@Url.Action("Logout", "Home")" key="logout">Đăng xuất</a>
+    <div class="container-fluid">
+        <div class="">
+            <div class="row mt-5">
+                <div class="col-4"></div>
+           
+                <div class="col-4">
+                    <div class="d-inline text-center">
+                        <img src="~/Resource/logo.png" alt="" class="mr-1"><span class="ml-5 font-weight-bold" style="font-size:20px;">CÔNG TY TNHH ĐIỆN TỬ UMC VIỆT NAM</span>
+                    </div>
+                  
+                    
                 </div>
-            </div>
-            <div class="col-1">
+                <div class="col-2">
+                    <button class="border-0 btn-light p-2 ra dropdown-toggle rounded" type="button" id="userDropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user fa-fw"></i>
+                        @{
+                            if (user != null)
+                            {
+                                <span>
+                                    @user.FullName
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="lang" key="Username"></span>
+                            }
+                        }
 
-                <button class="border-0 btn-light p-2 ra dropdown-toggle rounded" type="button" id="userDropdown"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        @if (user != null && user.IsReviewer == true)
+                        {
+                            <a class="dropdown-item lang" href="@Url.Action("ListTest", "Home")" key="reviewer"></a>
+                            <a class="dropdown-item lang" href="@Url.Action("ListExam", "Home")" key="add_question">Activity Log</a>
+                            <a class="dropdown-item lang" href="@Url.Action("Index", "Home")" key="answer_question">Activity Log</a>
+                            <a class="dropdown-item lang" href="@Url.Action("Register", "Home")" key="new_member">Activity Log</a>
+                        }
 
-                    <img src="~/Resource/vietnam.png" alt="" class="mr-1 icon-lang"><span class="text-lang">Tiếng Việt</span>
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a id="vi" class="dropdown-item translate" href="#!">
-                        <img src="~/Resource/vietnam.png" alt="">
-                        Tiếng Việt
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item lang" href="@Url.Action("ChangePassword", "Home")" key="change_password">Đăng xuất</a>
+                        <a class="dropdown-item lang" href="@Url.Action("Logout", "Home")" key="logout">Đăng xuất</a>
+                    </div>
+                </div>
+                <div class="col-1">
 
-                    </a>
-                    <a id="en" class="dropdown-item translate" href="#!">
+                    <button class="border-0 btn-light p-2 ra dropdown-toggle rounded" type="button" id="userDropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                        <img src="~/Resource/vietnam.png" alt="" class="mr-1 icon-lang"><span class="text-lang">Tiếng Việt</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                        <a id="vi" class="dropdown-item translate" href="#!">
+                            <img src="~/Resource/vietnam.png" alt="">
+                            Tiếng Việt
+
+                        </a>
+                        @*<a id="en" class="dropdown-item translate" href="#!">
                         <img src="~/Resource/united-states.png"
                              alt="">
                         Tiếng Anh
 
-                    </a>
-                    <a id="ja" class="dropdown-item translate" href="#!">
-                        <img src="~/Resource/japan.png" alt="">
-                        Tiếng Nhật
+                    </a>*@
+                        <a id="ja" class="dropdown-item translate" href="#!">
+                            <img src="~/Resource/japan.png" alt="">
+                            Tiếng Nhật
 
-                    </a>
+                        </a>
 
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
+     
         @RenderBody()
     </div>
     <script src="~/Scripts/jquery-3.5.1.slim.min.js"></script>

@@ -7,49 +7,52 @@
 @section styles{
     <link href="~/Content/DataTables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
 }
-<br />
-@if (Model != null && Model.Count > 0)
-{
-    <table id="table-content" class="table table-striped table-bordered" style="width:100%">
-        <thead>
-            <tr>
-                <th width="20px"></th>
-                <th width="100px" class="lang" key="code">Position</th>
-                <th width="100px" class="lang" key="name">Office</th>
-                <th width="100px" class="lang" key="dept">Age</th>
-                <th class="lang" key="test"> Start date</th>
-                <th width="100px" class="lang" key="point">Age</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var userTest in Model)
-            {
-                <tr>
-                    @if (userTest.Mark > 0)
+    <div class="container">
+        <br />
+        @if (Model != null && Model.Count > 0)
+        {
+            <table id="table-content" class="table table-striped table-bordered" style="width:100%">
+                <thead>
+                    <tr>
+                        <th width="20px"></th>
+                        <th width="100px" class="lang" key="code">Position</th>
+                        <th width="100px" class="lang" key="name">Office</th>
+                        <th width="100px" class="lang" key="dept">Age</th>
+                        <th class="lang" key="test"> Start date</th>
+                        <th width="100px" class="lang" key="point">Age</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var userTest in Model)
                     {
-                        <td><i class="fas fa-book text-success"></i></td>
+                        <tr>
+                            @if (userTest.Mark > 0)
+                            {
+                                <td><i class="fas fa-book text-success"></i></td>
+                            }
+                            else
+                            {
+                                <td><i class="fas fa-book-open text-danger"></i></td>
+                            }
+
+                            <td>
+                                <a href="@Url.Action("Detail","Home", new { Id = userTest.ID})"> @userTest.STAFF.StaffCode</a>
+
+                            </td>
+                            <td>@userTest.STAFF.FullName</td>
+                            <td>@userTest.STAFF.Dept</td>
+                            <td>@userTest.EXAM.Name</td>
+                            <td>@userTest.Mark</td>
+
+                        </tr>
                     }
-                    else
-                    {
-                        <td><i class="fas fa-book-open text-danger"></i></td>
-                    }
 
-                    <td>
-                        <a href="@Url.Action("Detail","Home", new { Id = userTest.ID})"> @userTest.STAFF.StaffCode</a>
-                       
-                    </td>
-                    <td>@userTest.STAFF.FullName</td>
-                    <td>@userTest.STAFF.Dept</td>
-                    <td>@userTest.EXAM.Name</td>
-                    <td>@userTest.Mark</td>
+                </tbody>
 
-                </tr>
-            }
+            </table>
+        }
 
-        </tbody>
-
-    </table>
-}
+    </div>
 
 
 @section scripts{
