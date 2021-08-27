@@ -1,6 +1,6 @@
 ﻿$(function () {
    
-    $('#submit1').click(function () {
+    $('#submit').click(function () {
         var answers = getAnswers();
         if (answers.length == $("textarea[name^='answer']").length) {
             $("#answers").val(JSON.stringify(answers))
@@ -17,8 +17,9 @@
     $(".type_number").keypress(function (e) {
         return onlyNumber(e)
     });
-  
+    
 })
+
 function getAnswers() {
     var answers = []
     $("textarea[name^='answer']").each(function (index, value) {

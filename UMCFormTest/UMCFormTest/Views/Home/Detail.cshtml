@@ -37,12 +37,12 @@
                 <div class="row border-left border-right border-bottom border-dark font-weight-bold">
                     <div class="col-5 border-right border-dark ">
                         <div class="row">
-                            <div class="col-3">
+                            <div class="col">
                                 <div class="d-inline lang" key="mark">Họ và tên:</div>
                                 <div class="d-inline">@Model.EXAM.Target </div>
                             </div>
-                            <div class="col form-inline">
-                                <input class="point type_number border-bottom" name="point" id="point" />
+                            <div class="col">
+                                <input class="point type_number" style="width:50%" name="point" id="point" />
                                 <span class="lang ml-2" key="point"></span>
                             </div>
                         </div>
@@ -50,9 +50,9 @@
 
 
                     </div>
-                    <div class="col-3">
-                        <div class="d-inline lang" key="review">Họ và tên:</div>
-                        <div class="d-inline ml-5">
+                    <div class="col-4">
+                        <div class="d-inline lang" key="review">Đánh giá</div>
+                        <div class="d-inline ml-1">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" id="checkboxOK" name="review" value="OK" checked>
                                 <label class="form-check-label" for="checkboxOK">OK</label>
@@ -63,25 +63,20 @@
                             </div>
 
                         </div>
+                        <button type="submit" id="reviewBtn" style="width:50%"class=" btn-success text-white lang btnDone rounded"> <i class="fa fa-check"></i><span key="done" class="lang ml-2"></span> </button>
 
                     </div>
-
-                    <div class="col-1">
-
-                        <button type="submit" id="reviewBtn" class=" btn-success text-white lang btnDone rounded"> <i class="fa fa-check"></i><span key="done" class="lang"></span> </button>
-                    </div>
-
 
                     <div class="col-3 border-left border-dark">
                         <div class="d-inline lang" key="date">Họ và tên:</div>
-                        <div class="d-inline">@Model.DateTest.ToString()</div>
+                        <div class="d-inline">@Model.DateTest.ToShortDateString()</div>
                     </div>
                 </div>
 
             }
             else
             {
-                <div class="row border-left border-right border-bottom border-dark">
+                <div class="row border-left border-right border-bottom border-dark font-weight-bold">
                     <div class="col-5 border-right border-dark">
                         <div class="row">
                             <div class="col">
@@ -130,7 +125,7 @@
                     </div>
                     <div class="col-3 border-left border-dark">
                         <div class="d-inline lang" key="date">Họ và tên:</div>
-                        <div class="d-inline">@Model.DateTest.ToString()</div>
+                        <div class="d-inline">@Model.DateTest.ToShortDateString()</div>
                     </div>
                 </div>
             }

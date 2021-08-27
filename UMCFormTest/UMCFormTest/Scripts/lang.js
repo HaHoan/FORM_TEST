@@ -61,6 +61,7 @@ var arrLang = {
         "test": "Exam",
         "done": "Done",
         "point": "Point",
+
         "answer_question": "Do exam",
         "name_exam": "Name",
         "date_create": "Date Create",
@@ -76,7 +77,12 @@ var arrLang = {
         "repass": "Reenter Password",
         "is_reviewer": "Is Reviewer",
         "change_password": "Change Password",
-        "old_password":"Old Password"
+        "old_password": "Old Password",
+        "confirm_submit": "Do you want to submit now?",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "confirm_delete": "Do you want to delete now?",
+        "confirm_delete_exam_doing": "This exam has have a people doing. Do you want to delete all? "
     },
     "vi": {
         "name": "Họ và tên",
@@ -95,7 +101,7 @@ var arrLang = {
         "reviewer": "Chấm điểm bài thi",
         "add_question": "Thêm bài thi mới",
         "test": "Bài thi",
-        "done": "Xong",
+        "done": "Chấm điểm",
         "point": "Điểm",
         "answer_question": "Làm bài thi",
         "name_exam": "Tiêu đề bài thi",
@@ -112,7 +118,12 @@ var arrLang = {
         "repass": "Gõ lại mật khẩu",
         "is_reviewer": "Là người đánh giá",
         "change_password": "Đổi Mật Khẩu",
-        "old_password":"Mật khẩu cũ"
+        "old_password": "Mật khẩu cũ",
+        "confirm_submit": "Bạn có muốn nộp ngay không?",
+        "cancel": "Hủy",
+        "delete": "Xóa",
+        "confirm_delete": "Bạn có muốn xóa bài kiểm tra này không?",
+        "confirm_delete_exam_doing":"Bài thi này đã có người làm! Bạn có muốn xóa hết các bài đã làm không?"
     },
     "ja": {
         "name": "名前   :",
@@ -132,7 +143,7 @@ var arrLang = {
         "reviewer": "Mark the test",
         "add_question": "Add New Exam",
         "test": "Exam",
-        "done": "Done",
+        "done": "Submit",
         "point": "Point",
         "answer_question": "Do exam",
         "name_exam": "Name",
@@ -149,6 +160,11 @@ var arrLang = {
         "repass": "Reenter Password",
         "is_reviewer": "Is Reviewer",
         "change_password": "Change Password",
-        "old_password":"Old Password"
+        "old_password": "Old Password",
+        "confirm_submit": "Do you want to submit now?",
+        "confirm_delete": "Do you want to delete now?",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "confirm_delete_exam_doing":"This exam has have a people doing. Do you want to delete all? "
     }
 };

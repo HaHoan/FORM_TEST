@@ -23,21 +23,20 @@
                 <div class="d-inline">@user.FullName</div>
             </div>
             <div class="col-7">
-                <div class="d-inline lang" key="code">Họ và tên:</div><span>:</span>
-                <div class="d-inline mr-5">@user.StaffCode</div>
-                <div class="d-inline lang ml-5" key="dept"></div><span>:</span>
-                <div class="d-inline mr-5">@user.Dept</div>
+                <div class="d-inline lang" key="code">Họ và tên:</div><span>: @user.StaffCode</span>
+                <div class="d-inline lang ml-5" key="dept"></div><span>:@user.Dept</span>
             </div>
+
         </div>
         <div class="row border-left border-right border-bottom border-dark font-weight-bold">
             <div class="col-5 border-right border-dark">
-                <div class="d-inline lang" key="mark">Họ và tên:</div>
+                <div class="d-inline lang" key="mark"></div>
                 <div class="d-inline">@Model.Target </div>
             </div>
 
-            <div class="col-3  border-dark">
-                <div class="d-inline lang" key="date">Họ và tên:</div>
-                <div class="d-inline">@(DateTime.Now)</div>
+            <div class="col-7 border-dark">
+                <div class="d-inline lang" key="date"></div>
+                <div class="d-inline">@(DateTime.Now.ToShortDateString())</div>
             </div>
         </div>
         <h4 class="lang text-center mt-5 font-italic font-weight-bold" style="  text-decoration: underline;" key="title"></h4>
@@ -93,12 +92,28 @@
         <input type="hidden" id="answers" name="answers" />
 
         <div class="row mt-5 mb-5">
-            <button type="button" id="submit1" class="btn btn-success lang mr-auto ml-auto mb-5" style="width:25%" key="submit"> </button>
+            <button type="button" class="btn btn-success lang mr-auto ml-auto mb-5" style="width:25%" key="submit" data-toggle="modal" data-target="#confirmModal"> </button>
         </div>
-
+       
     </form>
     }
+  
 
+    <!-- Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+               
+                <div class="modal-body">
+                    <p class="lang" key="confirm_submit"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary lang" data-dismiss="modal" key="cancel"></button>
+                    <button type="button" class="btn btn-success lang"  id="submit" key="submit" >Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 

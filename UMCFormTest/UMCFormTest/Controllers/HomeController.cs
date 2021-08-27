@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -43,9 +44,18 @@ namespace UMCFormTest.Controllers
 
         public ActionResult Detail(int Id)
         {
+            if (user == null) return View("Login");
             using (var db = new UMC_TESTEntities())
             {
                 var userTest = db.USER_TEST.Include("EXAM").Include("USER_TEST_DETAIL").Include("STAFF").Where(m => m.ID == Id).FirstOrDefault();
+                if (userTest == null)
+                {
+                    return RedirectToAction("ListTest");
+                }
+                else if (userTest.StaffCode != user.StaffCode)
+                {
+                    return RedirectToAction("Index");
+                }
                 userTest.USER_TEST_DETAIL = db.USER_TEST_DETAIL.Include("QUESTION").Where(m => m.ID_USER_TEST == Id).ToList();
                 return View(userTest);
             }
@@ -192,49 +202,174 @@ namespace UMCFormTest.Controllers
 
         public ActionResult Submit(string StaffCode, string DateTest, int ID_Exam, string answers)
         {
-            try
+
+            if (user == null) return View("Login");
+            using (var db = new UMC_TESTEntities())
             {
-                if (user == null) return View("Login");
-                using (var db = new UMC_TESTEntities())
+                using (DbContextTransaction transaction = db.Database.BeginTransaction())
                 {
-                    var list = JsonConvert.DeserializeObject<List<Answer>>(answers);
-                    var userTest = new USER_TEST
+                    try
                     {
-                        StaffCode = StaffCode,
-                        DateTest = DateTime.Parse(DateTest),
-                        ID_Exam = ID_Exam
-                    };
-                    userTest = db.USER_TEST.Add(userTest);
-                    db.SaveChanges();
-                    if (userTest.ID == 0)
+                        var userTest = db.USER_TEST.Where(m => m.ID_Exam == ID_Exam && m.StaffCode == StaffCode).FirstOrDefault();
+                        if (userTest != null)
+                        {
+                            ViewBag.Message = "Bạn đã làm bài thi này rồi!";
+                            return View("Error");
+                        }
+                        var list = JsonConvert.DeserializeObject<List<Answer>>(answers);
+                        userTest = new USER_TEST
+                        {
+                            StaffCode = StaffCode,
+                            DateTest = DateTime.Parse(DateTest),
+                            ID_Exam = ID_Exam
+                        };
+                        userTest = db.USER_TEST.Add(userTest);
+                        db.SaveChanges();
+                        if (userTest.ID == 0)
+                        {
+                            return View("Error");
+                        }
+                        List<USER_TEST_DETAIL> answerList = new List<USER_TEST_DETAIL>();
+                        foreach (var answer in list)
+                        {
+                            var userTestDetail = new USER_TEST_DETAIL()
+                            {
+                                ID_QUESTION = answer.index,
+                                ID_USER_TEST = userTest.ID,
+                                ANSWER = answer.value
+                            };
+                            answerList.Add(userTestDetail);
+                        }
+                        db.USER_TEST_DETAIL.AddRange(answerList);
+                        db.SaveChanges();
+                        transaction.Commit();
+                        ViewBag.Message = "Bạn đã hoàn thành xong bài thi!";
+                        return View("Success");
+
+
+                    }
+                    catch (Exception e)
                     {
+                        transaction.Rollback();
+                        ViewBag.Message = "Có lỗi xảy ra!";
                         return View("Error");
                     }
-                    foreach (var answer in list)
+
+                }
+
+            }
+        }
+        public JsonResult IsExamDoing(string Id)
+        {
+            try
+            {
+                var user = SessionHelper.Get<STAFF>(Constant.SESSION_LOGIN);
+                if (user == null) return Json(new { body = "" }, JsonRequestBehavior.AllowGet);
+                using (var db = new UMC_TESTEntities())
+                {
+                    if (string.IsNullOrEmpty(Id))
                     {
-                        var userTestDetail = new USER_TEST_DETAIL()
-                        {
-                            ID_QUESTION = answer.index,
-                            ID_USER_TEST = userTest.ID,
-                            ANSWER = answer.value
-                        };
-                        db.USER_TEST_DETAIL.Add(userTestDetail);
-                        db.SaveChanges();
+                        return Json(new { body = "" }, JsonRequestBehavior.AllowGet);
                     }
-                    ViewBag.Message = "Bạn đã hoàn thành xong bài thi!";
-                    return View("Success");
+                    else
+                    {
+                        int id = int.Parse(Id);
+                        var userTest = db.USER_TEST.Where(m => m.ID_Exam == id).FirstOrDefault();
+                        if (userTest != null)
+                        {
+                            return Json(new { result = "IS_DOING" }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                            return Json(new { result = "NOT_DOING" }, JsonRequestBehavior.AllowGet);
+                    }
+
                 }
             }
             catch (Exception e)
             {
-                return View("Error");
+                return Json(new { body = "" }, JsonRequestBehavior.AllowGet);
+
             }
 
+        }
+        [HttpPost]
+        public ActionResult DeleteExam(int ID_Exam)
+        {
+            if (user == null) return View("Login");
+            using (var db = new UMC_TESTEntities())
+            {
+                var exam = db.USER_TEST.Where(m => m.ID_Exam == ID_Exam).FirstOrDefault();
+                if (exam == null)
+                {
+                    using (DbContextTransaction transaction = db.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            var listQuest = db.QUESTIONs.Where(m => m.ID_EXAM == ID_Exam).ToList();
+                            db.QUESTIONs.RemoveRange(listQuest);
+                            var examDb = db.EXAMs.Where(m => m.ID == ID_Exam).FirstOrDefault();
+                            db.EXAMs.Remove(examDb);
+                            db.SaveChanges();
+                            transaction.Commit();
+                        }
+                        catch (Exception e)
+                        {
+                            transaction.Rollback();
+                            ViewBag.Message = "Có lỗi xảy ra!";
+                            return View("Error");
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+                return RedirectToAction("ListExam");
+            }
+        }
+        [HttpPost]
+        public ActionResult DeleteExamWhenDoing(int ID_Exam)
+        {
+            if (user == null) return View("Login");
+            using (var db = new UMC_TESTEntities())
+            {
+                using (DbContextTransaction transaction = db.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        var userTest = db.USER_TEST.Where(m => m.ID_Exam == ID_Exam).ToList();
+                        foreach (var user in userTest)
+                        {
+                            var userTestDetail = db.USER_TEST_DETAIL.Where(m => m.ID_USER_TEST == user.ID).ToList();
+                            db.USER_TEST_DETAIL.RemoveRange(userTestDetail);
+
+                        }
+                        db.SaveChanges();
+                        db.USER_TEST.RemoveRange(userTest);
+                        db.SaveChanges();
+                        var listQuest = db.QUESTIONs.Where(m => m.ID_EXAM == ID_Exam).ToList();
+                        db.QUESTIONs.RemoveRange(listQuest);
+                        var examDb = db.EXAMs.Where(m => m.ID == ID_Exam).FirstOrDefault();
+                        db.EXAMs.Remove(examDb);
+                        db.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        ViewBag.Message = "Có lỗi xảy ra!";
+                        return View("Error");
+                    }
+
+                }
+                return RedirectToAction("ListExam");
+            }
         }
 
         public ActionResult ListTest()
         {
             if (user == null) return View("Login");
+            if (!user.IsReviewer) return RedirectToAction("Index");
             using (var db = new UMC_TESTEntities())
             {
                 var list = db.USER_TEST.Include("EXAM").Include("STAFF").Include("USER_TEST_DETAIL").ToList();
@@ -274,6 +409,7 @@ namespace UMCFormTest.Controllers
         public ActionResult ListExam()
         {
             if (user == null) return View("Login");
+            if (!user.IsReviewer) return RedirectToAction("Index");
             using (var db = new UMC_TESTEntities())
             {
                 var list = db.EXAMs.ToList();
@@ -283,27 +419,72 @@ namespace UMCFormTest.Controllers
 
         [HttpPost]
 
-        public ActionResult AddExam(string name_exam_vi, string name_exam_ja, string list_question, string isCurrent, string target)
+        public ActionResult AddExam(string name_exam_vi, string name_exam_ja, string list_question, string isCurrent, string target, string id_exam)
         {
             try
             {
                 if (user == null) return View("Login");
                 using (var db = new UMC_TESTEntities())
                 {
+
                     var list = JsonConvert.DeserializeObject<List<Question>>(list_question);
-                    var exam = new EXAM()
+                    var examDb = new EXAM();
+                    if (!string.IsNullOrEmpty(id_exam))
                     {
-                        Name = JsonConvert.SerializeObject(new Question()
+                        var id = int.Parse(id_exam);
+
+                        var userTest = db.USER_TEST.Where(m => m.ID_Exam == id).FirstOrDefault();
+                        if (userTest != null)
+                        {
+                            if (isCurrent == "true")
+                            {
+                                examDb = db.EXAMs.Where(m => m.ID == id).FirstOrDefault();
+                                examDb.IsCurrent = isCurrent == "true" ? true : false;
+                                db.SaveChanges();
+                                var listExam = db.EXAMs.Where(m => m.IsCurrent == true && m.ID != examDb.ID).ToList();
+                                foreach (var e in listExam)
+                                {
+                                    e.IsCurrent = false;
+                                    db.SaveChanges();
+                                }
+                            }
+                            return RedirectToAction("ListExam");
+                        }
+
+                        examDb = db.EXAMs.Where(m => m.ID == id).FirstOrDefault();
+                        examDb.Name = JsonConvert.SerializeObject(new Question()
                         {
                             vi = name_exam_vi,
                             ja = name_exam_ja
-                        }),
-                        DateCreate = DateTime.Now,
-                        IsCurrent = isCurrent == "true" ? true : false,
-                        Target = int.Parse(target)
-                    };
-                    var examDb = db.EXAMs.Add(exam);
-                    db.SaveChanges();
+                        });
+                        examDb.DateCreate = DateTime.Now;
+                        examDb.IsCurrent = isCurrent == "true" ? true : false;
+                        examDb.Target = int.Parse(target);
+                        db.SaveChanges();
+                        var ques = db.QUESTIONs.Where(m => m.ID_EXAM == examDb.ID).ToList();
+                        foreach (var item in ques)
+                        {
+                            db.QUESTIONs.Remove(item);
+                        }
+                    }
+                    else
+                    {
+                        var exam = new EXAM()
+                        {
+                            Name = JsonConvert.SerializeObject(new Question()
+                            {
+                                vi = name_exam_vi,
+                                ja = name_exam_ja
+                            }),
+                            DateCreate = DateTime.Now,
+                            IsCurrent = isCurrent == "true" ? true : false,
+                            Target = int.Parse(target)
+                        };
+                        examDb = db.EXAMs.Add(exam);
+                        db.SaveChanges();
+
+                    }
+
                     if (examDb.IsCurrent == true)
                     {
                         var listExam = db.EXAMs.Where(m => m.IsCurrent == true && m.ID != examDb.ID).ToList();
@@ -326,8 +507,10 @@ namespace UMCFormTest.Controllers
                     }
                     return RedirectToAction("ListExam");
 
-                }
 
+
+
+                }
 
             }
             catch (Exception e)
@@ -337,5 +520,64 @@ namespace UMCFormTest.Controllers
             }
 
         }
+
+
+        public JsonResult GetExamDetail(string Id)
+        {
+            try
+            {
+                var user = SessionHelper.Get<STAFF>(Constant.SESSION_LOGIN);
+                if (user == null) return Json(new { body = "" }, JsonRequestBehavior.AllowGet);
+                using (var db = new UMC_TESTEntities())
+                {
+                    if (string.IsNullOrEmpty(Id))
+                    {
+                        return Json(new { body = "" }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        int id = int.Parse(Id);
+                        db.Configuration.ProxyCreationEnabled = false;
+                        var exam = db.EXAMs.Where(m => m.ID == id).FirstOrDefault();
+                        var question = db.QUESTIONs.Where(m => m.ID_EXAM == exam.ID).Select(p => new
+                        {
+                            ques = p.Question1
+                        }).ToList();
+                        var userTest = db.USER_TEST.Where(m => m.ID_Exam == id).Select(p => new
+                        {
+                            id = p.ID
+                        }).ToList();
+                        if (userTest != null && userTest.Count > 0)
+                        {
+                            return Json(new { exam = exam, question = question, isEdit = false }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                            return Json(new { exam = exam, question = question, isEdit = true }, JsonRequestBehavior.AllowGet);
+                    }
+
+                }
+            }
+            catch (Exception e)
+            {
+                return Json(new { body = "" }, JsonRequestBehavior.AllowGet);
+
+            }
+
+        }
+        public ActionResult ShowPDF(int Id)
+        {
+            if (user == null) return View("Login");
+            using (var db = new UMC_TESTEntities())
+            {
+                var userTest = db.USER_TEST.Include("EXAM").Include("USER_TEST_DETAIL").Include("STAFF").Where(m => m.ID == Id).FirstOrDefault();
+                if (userTest == null)
+                {
+                    return RedirectToAction("Index");
+                }
+                userTest.USER_TEST_DETAIL = db.USER_TEST_DETAIL.Include("QUESTION").Where(m => m.ID_USER_TEST == Id).ToList();
+                return View(userTest);
+            }
+        }
+
     }
 }

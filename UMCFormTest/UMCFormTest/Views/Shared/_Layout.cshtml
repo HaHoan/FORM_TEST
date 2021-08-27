@@ -18,18 +18,16 @@
 </head>
 <body>
     <div class="container-fluid">
-        <div class="">
+        <div class="container">
             <div class="row mt-5">
-                <div class="col-4"></div>
-           
-                <div class="col-4">
-                    <div class="d-inline text-center">
-                        <img src="~/Resource/logo.png" alt="" class="mr-1"><span class="ml-5 font-weight-bold" style="font-size:20px;">CÔNG TY TNHH ĐIỆN TỬ UMC VIỆT NAM</span>
-                    </div>
-                  
-                    
+
+                <div class="d-inline" style="margin:0 auto;">
+                    <a href="http://umc.com.vn/"><img src="~/Resource/logo.png" ></a>
+                    <span class="ml-1 font-weight-bold title">CÔNG TY TNHH ĐIỆN TỬ UMC VIỆT NAM</span>
                 </div>
-                <div class="col-2">
+
+
+                <div class="mr-2">
                     <button class="border-0 btn-light p-2 ra dropdown-toggle rounded" type="button" id="userDropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user fa-fw"></i>
@@ -61,7 +59,7 @@
                         <a class="dropdown-item lang" href="@Url.Action("Logout", "Home")" key="logout">Đăng xuất</a>
                     </div>
                 </div>
-                <div class="col-1">
+                <div class="">
 
                     <button class="border-0 btn-light p-2 ra dropdown-toggle rounded" type="button" id="userDropdown"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -75,11 +73,11 @@
 
                         </a>
                         @*<a id="en" class="dropdown-item translate" href="#!">
-                        <img src="~/Resource/united-states.png"
-                             alt="">
-                        Tiếng Anh
+                                <img src="~/Resource/united-states.png"
+                                     alt="">
+                                Tiếng Anh
 
-                    </a>*@
+                            </a>*@
                         <a id="ja" class="dropdown-item translate" href="#!">
                             <img src="~/Resource/japan.png" alt="">
                             Tiếng Nhật
@@ -91,10 +89,10 @@
 
             </div>
         </div>
-     
+
         @RenderBody()
     </div>
-    <script src="~/Scripts/jquery-3.5.1.slim.min.js"></script>
+    <script src="~/Scripts/jquery-3.5.1.min.js"></script>>
     <script src="~/Scripts/bootstrap.bundle.min.js"></script>
     <script src="~/Scripts/lang.js"></script>
     <script src="~/Scripts/script.js"></script>

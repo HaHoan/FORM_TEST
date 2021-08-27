@@ -62,7 +62,7 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ID_USER_TEST" Type="int" Nullable="false" />
           <Property Name="ID_QUESTION" Type="int" Nullable="false" />
-          <Property Name="ANSWER" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="ANSWER" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
         <Association Name="FK_DETAILQUESTION1">
           <End Role="QUESTION" Type="Self.QUESTION" Multiplicity="1" />
@@ -176,7 +176,6 @@
           </AssociationSet>
           <EntitySet Name="EXAMs" EntityType="UMC_TESTModel.EXAM" />
           <EntitySet Name="QUESTIONs" EntityType="UMC_TESTModel.QUESTION" />
-          <EntitySet Name="USER_TEST_DETAIL" EntityType="UMC_TESTModel.USER_TEST_DETAIL" />
           <AssociationSet Name="FK_EXAMQUESTION" Association="UMC_TESTModel.FK_EXAMQUESTION">
             <End Role="EXAM" EntitySet="EXAMs" />
             <End Role="QUESTION" EntitySet="QUESTIONs" />
@@ -185,6 +184,7 @@
             <End Role="EXAM" EntitySet="EXAMs" />
             <End Role="USER_TEST" EntitySet="USER_TEST" />
           </AssociationSet>
+          <EntitySet Name="USER_TEST_DETAIL" EntityType="UMC_TESTModel.USER_TEST_DETAIL" />
           <AssociationSet Name="FK_DETAILQUESTION1" Association="UMC_TESTModel.FK_DETAILQUESTION1">
             <End Role="QUESTION" EntitySet="QUESTIONs" />
             <End Role="USER_TEST_DETAIL" EntitySet="USER_TEST_DETAIL" />
@@ -193,7 +193,7 @@
             <End Role="USER_TEST" EntitySet="USER_TEST" />
             <End Role="USER_TEST_DETAIL" EntitySet="USER_TEST_DETAIL" />
           </AssociationSet>
-        </EntityContainer>
+          </EntityContainer>
         <EntityType Name="USER_TEST">
           <Key>
             <PropertyRef Name="ID" />
@@ -254,17 +254,6 @@
           <NavigationProperty Name="EXAM" Relationship="UMC_TESTModel.FK_EXAMQUESTION" FromRole="QUESTION" ToRole="EXAM" />
           <NavigationProperty Name="USER_TEST_DETAIL" Relationship="UMC_TESTModel.FK_DETAILQUESTION1" FromRole="QUESTION" ToRole="USER_TEST_DETAIL" />
         </EntityType>
-        <EntityType Name="USER_TEST_DETAIL">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ID_USER_TEST" Type="Int32" Nullable="false" />
-          <Property Name="ID_QUESTION" Type="Int32" Nullable="false" />
-          <Property Name="ANSWER" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="QUESTION" Relationship="UMC_TESTModel.FK_DETAILQUESTION1" FromRole="USER_TEST_DETAIL" ToRole="QUESTION" />
-          <NavigationProperty Name="USER_TEST" Relationship="UMC_TESTModel.FK_DETAILTEST" FromRole="USER_TEST_DETAIL" ToRole="USER_TEST" />
-        </EntityType>
         <Association Name="FK_EXAMQUESTION">
           <End Type="UMC_TESTModel.EXAM" Role="EXAM" Multiplicity="1" />
           <End Type="UMC_TESTModel.QUESTION" Role="QUESTION" Multiplicity="*" />
@@ -289,6 +278,17 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="USER_TEST_DETAIL">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_USER_TEST" Type="Int32" Nullable="false" />
+          <Property Name="ID_QUESTION" Type="Int32" Nullable="false" />
+          <Property Name="ANSWER" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="QUESTION" Relationship="UMC_TESTModel.FK_DETAILQUESTION1" FromRole="USER_TEST_DETAIL" ToRole="QUESTION" />
+          <NavigationProperty Name="USER_TEST" Relationship="UMC_TESTModel.FK_DETAILTEST" FromRole="USER_TEST_DETAIL" ToRole="USER_TEST" />
+        </EntityType>
         <Association Name="FK_DETAILQUESTION1">
           <End Type="UMC_TESTModel.QUESTION" Role="QUESTION" Multiplicity="1" />
           <End Type="UMC_TESTModel.USER_TEST_DETAIL" Role="USER_TEST_DETAIL" Multiplicity="*" />
@@ -313,7 +313,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>

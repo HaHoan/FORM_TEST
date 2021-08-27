@@ -26,37 +26,41 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var exam in Model)
-                    {
-                        <tr>
-                            @if (exam.IsCurrent == true)
-                            {
-                                <td><i class="fas fa-book text-success"></i></td>
-                            }
-                            else
-                            {
-                                <td><i class="fas fa-book-open text-secondary"></i></td>
-                            }
-
-                            <td>
-                                @{
-                                    try
-                                    {
-                                        var name = JsonConvert.DeserializeObject<Question>(exam.Name);
-                                        <p class="d-none" id=@("name_vi")><span class="text-center " key="question"></span>@(name.vi)</p>
-                                        <p class="d-none" id=@("name_ja")><span class="text-center" key="question"></span>@(name.ja)</p>
-                                    }
-                                    catch (Exception)
-                                    {
-                                        <p class=" text-center ">@exam.Name</p>
-                                    }
+                    @{
+                        var i = 0;
+                        foreach (var exam in Model)
+                        {
+                            i++;
+                            <tr>
+                                @if (exam.IsCurrent == true)
+                                {
+                                    <td><i class="fas fa-book text-success"></i></td>
+                                }
+                                else
+                                {
+                                    <td><i class="fas fa-book-open text-secondary"></i></td>
                                 }
 
+                                <td>
+                                    @{
+                                        try
+                                        {
+                                            var name = JsonConvert.DeserializeObject<Question>(exam.Name);
+                                            <a class="d-none" id=@("name_vi") name=@("name_title_" + exam.ID) href="javascript:void(0);"><span class="text-center " key="question"></span>@(name.vi)</a>
+                                            <a class="d-none" id=@("name_ja") name=@("name_title_" + exam.ID) href="javascript:void(0);"><span class="text-center" key="question"></span>@(name.ja)</a>
+                                        }
+                                        catch (Exception)
+                                        {
+                                            <a class=" text-center " name=@("name_exam_" + exam.ID) href="javascript:void(0);">@exam.Name</a>
+                                        }
+                                    }
 
-                            </td>
-                            <td>@exam.DateCreate.ToShortDateString()</td>
 
-                        </tr>
+                                </td>
+                                <td>@exam.DateCreate.ToShortDateString()</td>
+
+                            </tr>
+                        }
                     }
 
                 </tbody>
@@ -68,6 +72,8 @@
     <div class="col-8">
         @using (Html.BeginForm("AddExam", "Home", FormMethod.Post, new { id = "add_form" }))
         {
+            @Html.ValidationSummary();
+            <input type="hidden" name="id_exam" />
             <label class="lang font-weight-bold" key="name_exam"></label>
             <textarea class="form-control mt-1" name="name_exam_vi" placeholder="Tiếng Việt"></textarea>
             <textarea class="form-control mt-2" name="name_exam_ja" placeholder="Tiếng Nhật"></textarea>
@@ -78,7 +84,7 @@
                     <div id=@("form_" + i)>
 
                         <label class="lang font-weight-bold mt-2" key="question" id=@("label_" + i)></label><span class="font-weight-bold" id=@("question_" + i)> @i</span>
-                        <button class="btn-delete text-danger font-weight-bold " id=@("delete_" + i) name=@i>x</button>
+                        <button class="btn-delete text-danger font-weight-bold  " id=@("question_delete_" + i) name=@i>x</button>
                         <textarea class="form-control mt-1" placeholder="Tiếng Việt" id=@("question_" + i + "_vi")></textarea>
                         <textarea class="form-control mt-1" placeholder="Tiếng Nhật" id=@("question_" + i + "_ja")></textarea>
                     </div>
@@ -98,12 +104,55 @@
             <label class=" lang mt-1" for="isCurrent" key="isCurrent">  </label>
             <br />
             <button class="btn btn-success lang" key="save" type="button" id="add_submit"></button>
+            <button class="btn btn-danger lang d-none" key="delete" type="button" id="btn_delete_exam"></button>
 
         }
         <br />
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="confirmDeleteExam" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <p class="lang" key="confirm_delete"></p>
+            </div>
+            @using (Html.BeginForm("DeleteExam", "Home", FormMethod.Post, new { id = "delete_form" }))
+            {
+                <input type="hidden" name="id_exam" />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary lang" data-dismiss="modal" key="cancel"></button>
+                    <button type="submit" class="btn btn-danger lang" key="delete">Save changes</button>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="confirmDeleteExamDoingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <p class="lang" key="confirm_delete_exam_doing"></p>
+            </div>
+            @using (Html.BeginForm("DeleteExamWhenDoing", "Home", FormMethod.Post, new { id = "delete_exam_doing_form" }))
+            {
+                <input type="hidden" name="id_exam" />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary lang" data-dismiss="modal" key="cancel"></button>
+                    <button type="submit" class="btn btn-danger lang" id="btn_delete_exam" key="delete">Save changes</button>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
 
 @section scripts{
 

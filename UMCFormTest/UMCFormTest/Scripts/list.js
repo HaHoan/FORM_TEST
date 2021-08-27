@@ -52,18 +52,18 @@
     })
     var number = $(".list_question div").length;
     for (var i = 1; i <= number; i++) {
-        $('#delete_' + i).click(function (e) {
+        $('#question_delete_' + i).click(function (e) {
             deleteRow($(this).attr('name'))
         })
 
     }
     $('#add_submit').click(function () {
-       
+
         if ($("[name^='name_exam']").val() == '') {
             alert("Bạn cần nhập tên tiêu đề bài thi")
             return false;
         }
-    
+
         var question = getQuestions();
         if (question.length == 0) {
             alert("Bạn cần nhập các câu hỏi")
@@ -75,6 +75,17 @@
         }
         $("#list_question").val(JSON.stringify(question))
         $('#add_form').submit()
+    })
+    $('#btn_delete_exam').click(function () {
+        IsExamDoing($("[name='id_exam'").val());
+    })
+
+
+    $("[name^='name_title_'").click(function () {
+        var name = $(this).attr('name');
+        var indexOf = name.lastIndexOf('_');
+        var id = name.substr(indexOf + 1, name.length - 1)
+        getExamDetail(id)
     })
 
 })
@@ -99,4 +110,70 @@ function getQuestions() {
 
     })
     return list;
+}
+function getExamDetail(Id) {
+    $.ajax({
+        url: "/Home/GetExamDetail",
+        type: "GET",
+        data: {
+            Id: Id
+        },
+        success: function (response) {
+            const exam = JSON.parse(response.exam.Name);
+            $("[name^='name_exam_vi']").val(exam.vi)
+            $("[name^='name_exam_ja']").val(exam.ja)
+            $("[id^='question_']").val("")
+            $.each(response.question, function (i, value) {
+                const ques = JSON.parse(value.ques);
+                $("#question_" + (i + 1) + "_vi").val(ques.vi);
+                $("#question_" + (i + 1) + "_ja").val(ques.ja);
+            });
+            $("[name='target'").val(response.exam.Target)
+            if (response.exam.IsCurrent == true) {
+                $('#isCurrent').prop('checked', true);
+            } else {
+                $('#isCurrent').prop('checked', false);
+            }
+            $("[name='id_exam'").val(response.exam.ID);
+            $("#btn_delete_exam").removeClass('d-none')
+            if (response.isEdit == false) {
+                $("[name^='name_exam_vi']").prop("readonly", true);
+                $("[name^='name_exam_ja']").prop("readonly", true);
+                $("[id^='question_']").prop("readonly", true);
+                $("[name='target'").prop("readonly", true);
+                $("[id^='question_delete_'").addClass('d-none')
+                $("[id='btn_add_question'").addClass('d-none')
+
+            } else {
+                $("[name^='name_exam_vi']").prop("readonly", false);
+                $("[name^='name_exam_ja']").prop("readonly", false);
+                $("[id^='question_']").prop("readonly", false);
+                $("[name='target'").prop("readonly", false);
+                $("[id^='question_delete_'").removeClass('d-none')
+
+            }
+        },
+        error: function (e) {
+
+        }
+    });
+}
+function IsExamDoing(Id) {
+    $.ajax({
+        url: "/Home/IsExamDoing",
+        type: "GET",
+        data: {
+            Id: Id
+        },
+        success: function (response) {
+            if (response.result == 'IS_DOING') {
+                $('#confirmDeleteExamDoingModal').modal('show');
+            } else {
+                $('#confirmDeleteExam').modal('show');
+            }
+        },
+        error: function (e) {
+            alert("Có lỗi xảy ra!")
+        }
+    });
 }

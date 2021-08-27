@@ -11,12 +11,12 @@
         <AssociationConnector Association="UMC_TESTModel.FK_TESTSTAFF" />
         <EntityTypeShape EntityType="UMC_TESTModel.EXAM" Width="1.5" PointX="0.75" PointY="5" />
         <EntityTypeShape EntityType="UMC_TESTModel.QUESTION" Width="1.5" PointX="3" PointY="9" />
-        <EntityTypeShape EntityType="UMC_TESTModel.USER_TEST_DETAIL" Width="1.5" PointX="5.25" PointY="9.875" />
         <AssociationConnector Association="UMC_TESTModel.FK_EXAMQUESTION" />
         <AssociationConnector Association="UMC_TESTModel.FK_EXAMUSERTEST" />
+        <EntityTypeShape EntityType="UMC_TESTModel.USER_TEST_DETAIL" Width="1.5" PointX="5.25" PointY="9.875" />
         <AssociationConnector Association="UMC_TESTModel.FK_DETAILQUESTION1" />
         <AssociationConnector Association="UMC_TESTModel.FK_DETAILTEST" />
-      </Diagram>
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>
