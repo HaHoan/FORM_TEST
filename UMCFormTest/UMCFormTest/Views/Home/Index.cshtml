@@ -20,7 +20,7 @@
         <div class="row mt-5 border border-dark font-weight-bold">
             <div class="col-5 border-right border-dark">
                 <div class="d-inline lang" key="name"></div><span>:</span>
-                <div class="d-inline">@user.FullName</div>
+                <div class="d-inline" id="full_name">@user.FullName</div>
             </div>
             <div class="col-7">
                 <div class="d-inline lang" key="code">Họ và tên:</div><span>: @user.StaffCode</span>
@@ -44,6 +44,7 @@
             try
             {
                 var name = JsonConvert.DeserializeObject<Question>(Model.Name);
+                <input type="hidden" value="@(name.vi)" id="title_exam"/>
                 <h4 class="d-none text-center font-italic font-weight-bold" id=@("name_vi")><span class="" key="question"></span>@(name.vi)</h4>
                 <h4 class="d-none text-center font-italic font-weight-bold" id=@("name_ja")><span class="" key="question"></span>@(name.ja)</h4>
             }

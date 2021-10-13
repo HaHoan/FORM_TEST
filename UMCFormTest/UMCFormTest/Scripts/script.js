@@ -4,6 +4,7 @@
         var answers = getAnswers();
         if (answers.length == $("textarea[name^='answer']").length) {
             $("#answers").val(JSON.stringify(answers))
+            Send($('#full_name').text(), " Vừa nộp bài " + $('#title_exam').val())
             $('#submit-form').submit()
         }
 
