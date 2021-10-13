@@ -1,5 +1,4 @@
 ﻿$(function () {
-    $('#table-content').DataTable();
     $('#btn_add_question').click(function () {
 
         var number = $(".list_question label").length;
@@ -86,6 +85,30 @@
         var indexOf = name.lastIndexOf('_');
         var id = name.substr(indexOf + 1, name.length - 1)
         getExamDetail(id)
+    })
+
+
+    $('.tableData').DataTable({
+        initComplete: function () {
+            this.api().columns(5).every(function () {
+                var column = this;
+                var select = $('<select class="form-control"><option value=""></option></select>')
+                    .appendTo($(column.header()).empty())
+                    .on('change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search(val ? '^' + val + '$' : '', true, false)
+                            .draw();
+                    });
+                column.data().unique().sort().each(function (d, j) {
+                    select.append('<option value="' + d + '">' + d + '</option>')
+                });
+
+            });
+        },
+        lengthMenu:[50,100]
     })
 
 })

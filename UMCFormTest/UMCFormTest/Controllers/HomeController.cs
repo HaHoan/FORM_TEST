@@ -372,7 +372,7 @@ namespace UMCFormTest.Controllers
             if (!user.IsReviewer) return RedirectToAction("Index");
             using (var db = new UMC_TESTEntities())
             {
-                var list = db.USER_TEST.Include("EXAM").Include("STAFF").Include("USER_TEST_DETAIL").ToList();
+                var list = db.USER_TEST.Include("EXAM").Include("STAFF").Include("USER_TEST_DETAIL").OrderByDescending(m => m.DateTest).ToList();
                 return View(list);
             }
 

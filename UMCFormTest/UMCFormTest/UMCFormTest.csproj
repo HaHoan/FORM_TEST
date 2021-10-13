@@ -479,6 +479,8 @@
     <Content Include="Scripts\lang.js" />
     <Content Include="Scripts\list.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\notice.js" />
+    <Content Include="Scripts\notice\notice.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
     <Content Include="Scripts\popper.js" />
