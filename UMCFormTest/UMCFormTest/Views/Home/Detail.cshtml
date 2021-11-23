@@ -15,7 +15,7 @@
 <div class="container">
     @if (user != null && Model != null)
     {
-        using (Html.BeginForm("Mark", "Home", FormMethod.Post))
+        using (Html.BeginForm("Mark", "Home", FormMethod.Post, new { Id = "review-form"}))
         {
             <input type="hidden" name="ID_USER_TEST" value="@Model.ID" />
             <div class="row mt-5 border border-dark font-weight-bold">
@@ -63,7 +63,7 @@
                             </div>
 
                         </div>
-                        <button type="submit" id="reviewBtn" style="width:50%"class=" btn-success text-white lang btnDone rounded"> <i class="fa fa-check"></i><span key="done" class="lang ml-2"></span> </button>
+                        <button type="button" id="reviewBtn" style="width:50%" class=" btn-success text-white lang btnDone rounded"> <i class="fa fa-check"></i><span key="done" class="lang ml-2"></span> </button>
 
                     </div>
 
@@ -159,6 +159,7 @@
 
                             <p class="d-none" id=@("question_vi_" + i)><span class="lang" key="question"></span>@(" " + i + ". " + ques.vi)</p>
                             <p class="d-none" id=@("question_ja_" + i)><span class="lang" key="question"></span>@(" " + i + ". " + ques.ja)</p>
+
                         }
                         catch (Exception)
                         {
@@ -166,8 +167,38 @@
                         }
 
                     }
-                    <textarea class="form-control bg-white" rows="4" readonly>@answer.ANSWER</textarea>
+                    <input type="hidden" id=@("question_" + i) value="@answer.QUESTION.ID">
+                    <textarea class="form-control bg-white" name=@("answer_" + i) rows="4" readonly>@answer.ANSWER</textarea>
                 </div>
+                if (user.StaffCode != Model.STAFF.StaffCode && Model.Mark == null && user.IsReviewer)
+                {
+                    <div class="row mt-3">
+                        <br />
+                        <label>ĐIỂM</label>
+                        <input class="form-control" id="@("point_" + i)"/>
+                        <br />
+                        <label>COMMENT</label>
+                        <textarea class="form-control bg-white" rows="4" id="@("comment_" + i)">@answer.COMMENT</textarea>
+                        <br />
+
+                    </div>
+                }
+                else
+                {
+                    <div class="row mt-3">
+                       
+                        <p>
+                            ĐIỂM : @answer.POINT
+                            <br />
+                            COMMENT
+                            <br />
+                        </p>
+                     
+                        <textarea class="form-control bg-white" rows="4" readonly>@answer.COMMENT</textarea>
+                        <br />
+
+                    </div>
+                }
 
             }
             <input type="hidden" id="answers" name="answers" />

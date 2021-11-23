@@ -52,7 +52,7 @@ namespace UMCFormTest.Controllers
                 {
                     return RedirectToAction("ListTest");
                 }
-                else if (userTest.StaffCode != user.StaffCode)
+                else if (userTest.StaffCode != user.StaffCode && !user.IsReviewer)
                 {
                     return RedirectToAction("Index");
                 }
@@ -216,7 +216,7 @@ namespace UMCFormTest.Controllers
                             ViewBag.Message = "Bạn đã làm bài thi này rồi!";
                             return View("Error");
                         }
-                        var list = JsonConvert.DeserializeObject<List<Answer>>(answers);
+
                         userTest = new USER_TEST
                         {
                             StaffCode = StaffCode,
@@ -230,13 +230,16 @@ namespace UMCFormTest.Controllers
                             return View("Error");
                         }
                         List<USER_TEST_DETAIL> answerList = new List<USER_TEST_DETAIL>();
+                        var list = JsonConvert.DeserializeObject<List<Answer>>(answers);
                         foreach (var answer in list)
                         {
                             var userTestDetail = new USER_TEST_DETAIL()
                             {
                                 ID_QUESTION = answer.index,
                                 ID_USER_TEST = userTest.ID,
-                                ANSWER = answer.value
+                                ANSWER = answer.value,
+                                POINT = 0,
+                                COMMENT = ""
                             };
                             answerList.Add(userTestDetail);
                         }
@@ -366,6 +369,40 @@ namespace UMCFormTest.Controllers
             }
         }
 
+        public ActionResult DeleteAnswer(int Id)
+        {
+            if (user == null) return View("Login");
+            using (var db = new UMC_TESTEntities())
+            {
+                var userTest = db.USER_TEST.Where(m => m.ID == Id).FirstOrDefault();
+                if (userTest != null)
+                {
+                    using (DbContextTransaction transaction = db.Database.BeginTransaction())
+                    {
+                        try
+                        {
+                            var listAnswerDetail = db.USER_TEST_DETAIL.Where(m => m.ID_USER_TEST == userTest.ID).ToList();
+                            db.USER_TEST_DETAIL.RemoveRange(listAnswerDetail);
+                            db.USER_TEST.Remove(userTest);
+                            
+                            db.SaveChanges();
+                            transaction.Commit();
+                        }
+                        catch (Exception e)
+                        {
+                            transaction.Rollback();
+                            ViewBag.Message = "Có lỗi xảy ra!";
+                            return View("Error");
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+                return RedirectToAction("ListTest");
+            }
+        }
         public ActionResult ListTest()
         {
             if (user == null) return View("Login");
@@ -380,29 +417,65 @@ namespace UMCFormTest.Controllers
 
         [HttpPost]
 
-        public ActionResult Mark(int point, string review, int ID_USER_TEST)
+        public ActionResult Mark(int point, string review, int ID_USER_TEST, string answers)
         {
-            try
+
+            if (user == null) return View("Login");
+            using (var db = new UMC_TESTEntities())
             {
-                if (user == null) return View("Login");
-                using (var db = new UMC_TESTEntities())
+                using (DbContextTransaction transaction = db.Database.BeginTransaction())
                 {
-                    var userTest = db.USER_TEST.Where(m => m.ID == ID_USER_TEST).FirstOrDefault();
-                    if (userTest == null)
+                    try
                     {
+                        var userTest = db.USER_TEST.Where(m => m.ID == ID_USER_TEST).FirstOrDefault();
+                        if (userTest == null)
+                        {
+                            return View("Error");
+                        }
+                        userTest.Mark = point;
+                        userTest.Review = review;
+
+                        var list = JsonConvert.DeserializeObject<List<Answer>>(answers);
+                        foreach (var answer in list)
+                        {
+                            var userTestDetail = db.USER_TEST_DETAIL.Where(m => m.ID_QUESTION == answer.index && m.ID_USER_TEST == userTest.ID).FirstOrDefault();
+                            if(userTestDetail != null)
+                            {
+                                userTestDetail.POINT = int.Parse(answer.point);
+                                userTestDetail.COMMENT = answer.comment;
+                            }
+                            else
+                            {
+                                userTestDetail = new USER_TEST_DETAIL()
+                                {
+                                    ID_QUESTION = answer.index,
+                                    ID_USER_TEST = userTest.ID,
+                                    ANSWER = answer.value,
+                                    POINT = int.Parse(answer.point),
+                                    COMMENT = answer.comment
+                                };
+                                db.USER_TEST_DETAIL.Add(userTestDetail);
+                            }
+                          
+                           
+                        }
+
+                        db.SaveChanges();
+                        transaction.Commit();
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        ViewBag.Message = "Có lỗi xảy ra!";
                         return View("Error");
                     }
-                    userTest.Mark = point;
-                    userTest.Review = review;
-                    db.SaveChanges();
 
                 }
-                return RedirectToAction("ListTest");
+
+
             }
-            catch (Exception)
-            {
-                return View("Error");
-            }
+            return RedirectToAction("ListTest");
+
 
         }
 

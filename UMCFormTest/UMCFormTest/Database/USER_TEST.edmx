@@ -63,6 +63,8 @@
           <Property Name="ID_USER_TEST" Type="int" Nullable="false" />
           <Property Name="ID_QUESTION" Type="int" Nullable="false" />
           <Property Name="ANSWER" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="COMMENT" Type="nvarchar" MaxLength="50" />
+          <Property Name="POINT" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_DETAILQUESTION1">
           <End Role="QUESTION" Type="Self.QUESTION" Multiplicity="1" />
@@ -286,6 +288,8 @@
           <Property Name="ID_USER_TEST" Type="Int32" Nullable="false" />
           <Property Name="ID_QUESTION" Type="Int32" Nullable="false" />
           <Property Name="ANSWER" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="COMMENT" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="POINT" Type="Int32" Nullable="false" />
           <NavigationProperty Name="QUESTION" Relationship="UMC_TESTModel.FK_DETAILQUESTION1" FromRole="USER_TEST_DETAIL" ToRole="QUESTION" />
           <NavigationProperty Name="USER_TEST" Relationship="UMC_TESTModel.FK_DETAILTEST" FromRole="USER_TEST_DETAIL" ToRole="USER_TEST" />
         </EntityType>
@@ -377,6 +381,8 @@
           <EntitySetMapping Name="USER_TEST_DETAIL">
             <EntityTypeMapping TypeName="UMC_TESTModel.USER_TEST_DETAIL">
               <MappingFragment StoreEntitySet="USER_TEST_DETAIL">
+                <ScalarProperty Name="POINT" ColumnName="POINT" />
+                <ScalarProperty Name="COMMENT" ColumnName="COMMENT" />
                 <ScalarProperty Name="ANSWER" ColumnName="ANSWER" />
                 <ScalarProperty Name="ID_QUESTION" ColumnName="ID_QUESTION" />
                 <ScalarProperty Name="ID_USER_TEST" ColumnName="ID_USER_TEST" />

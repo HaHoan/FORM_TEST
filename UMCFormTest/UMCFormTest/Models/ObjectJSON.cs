@@ -9,6 +9,8 @@ namespace UMCFormTest.Models
     {
         public int index { get; set; }
         public string value { get; set; }
+        public string point { get; set; }
+        public string comment { get; set; }
     }
     public class Question
     {
