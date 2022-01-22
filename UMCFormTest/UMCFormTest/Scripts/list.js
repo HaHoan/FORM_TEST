@@ -1,51 +1,6 @@
 ﻿$(function () {
     $('#btn_add_question').click(function () {
-
-        var number = $(".list_question label").length;
-        number = number + 1;
-        var div = $('<div />', {
-            id: 'form_' + number
-        })
-        $('.list_question').append(div)
-        var label = $('<label />', {
-            class: "lang font-weight-bold mt-2",
-            key: "question",
-            id: 'label_' + number
-
-        })
-        var span = $('<span />', {
-            class: 'font-weight-bold ml-1',
-            text: number,
-            id: "question_" + number
-        })
-
-        var btnXoa = $('<button/>', {
-            type: 'button',
-            text: 'x',
-            class: 'btn-delete text-danger font-weight-bold ml-1',
-            click: function (e) {
-                deleteRow($(this).attr('name'))
-            },
-            name: number
-        });
-        div.append(label)
-        div.append(span)
-        div.append(btnXoa)
-        var inputVi = $('<input />', {
-            class: 'form-control mt-1',
-            placeholder: "Tiếng Việt",
-            id: "question_" + number + "_vi"
-        })
-
-        var inputJa = $('<input />', {
-            class: 'form-control mt-1',
-            placeholder: "Tiếng Nhật",
-            id: "question_" + number + "_ja"
-        })
-
-        div.append(inputVi)
-        div.append(inputJa)
-
+        addQuestion($(this).attr('name'));
         var lang = localStorage.getItem('lang') || 'en';
         changeLanguage(lang);
     })
@@ -108,10 +63,56 @@
 
             });
         },
-        lengthMenu:[50,100]
+        lengthMenu: [50, 100]
     })
 
 })
+function addQuestion(index) {
+    var number = $(".list_question label").length;
+    number = number + 1;
+    var div = $('<div />', {
+        id: 'form_' + number
+    })
+    $('.list_question').append(div)
+    var label = $('<label />', {
+        class: "lang font-weight-bold mt-2",
+        key: "question",
+        id: 'label_' + number
+
+    })
+    var span = $('<span />', {
+        class: 'font-weight-bold ml-1',
+        text: number,
+        id: "question_" + number
+    })
+
+    var btnXoa = $('<button/>', {
+        type: 'button',
+        text: 'x',
+        class: 'btn-delete text-danger font-weight-bold ml-1',
+        click: function (e) {
+            deleteRow(index)
+        },
+        name: number
+    });
+    div.append(label)
+    div.append(span)
+    div.append(btnXoa)
+    var inputVi = $('<input />', {
+        class: 'form-control mt-1',
+        placeholder: "Tiếng Việt",
+        id: "question_" + number + "_vi"
+    })
+
+    var inputJa = $('<input />', {
+        class: 'form-control mt-1',
+        placeholder: "Tiếng Nhật",
+        id: "question_" + number + "_ja"
+    })
+
+    div.append(inputVi)
+    div.append(inputJa)
+}
 function deleteRow(index) {
     $('#form_' + index).remove();
 }
@@ -146,6 +147,13 @@ function getExamDetail(Id) {
             $("[name^='name_exam_vi']").val(exam.vi)
             $("[name^='name_exam_ja']").val(exam.ja)
             $("[id^='question_']").val("")
+            var length = response.question.length
+            var currentRow = $('[id^="form_"]').length;
+            if (currentRow < length) {
+                for (var a = currentRow; a < length; a++) {
+                    addQuestion(a)
+                }
+            }
             $.each(response.question, function (i, value) {
                 const ques = JSON.parse(value.ques);
                 $("#question_" + (i + 1) + "_vi").val(ques.vi);
@@ -181,6 +189,7 @@ function getExamDetail(Id) {
         }
     });
 }
+
 function IsExamDoing(Id) {
     $.ajax({
         url: "/Home/IsExamDoing",
