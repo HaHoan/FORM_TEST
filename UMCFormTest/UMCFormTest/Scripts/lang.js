@@ -16,6 +16,8 @@ function changeLanguage(lang) {
         $('[id^=' + 'question_ja_' + ']').addClass("d-none")
         $('[id^=' + 'name_vi' + ']').removeClass("d-none")
         $('[id^=' + 'name_ja' + ']').addClass("d-none")
+        $('[name = "form_multiple_choice_vi"]').removeClass('d-none')
+        $('[name = "form_multiple_choice_ja"]').addClass('d-none')
     } else if (lang == "ja") {
         $(".icon-lang").attr('src', "/Resource/japan.png");
         $(".text-lang").text("日本語")
@@ -25,6 +27,10 @@ function changeLanguage(lang) {
 
         $('[id^=' + 'name_vi' + ']').addClass("d-none")
         $('[id^=' + 'name_ja' + ']').removeClass("d-none")
+
+        $('[name = "form_multiple_choice_vi"]').addClass('d-none')
+        $('[name = "form_multiple_choice_ja"]').removeClass('d-none')
+
     }
 
 
@@ -61,7 +67,7 @@ var arrLang = {
         "test": "Exam",
         "done": "Done",
         "point": "Point",
-
+        "is_correct_answer":"Is Correct Answer?",
         "answer_question": "Do exam",
         "name_exam": "Name",
         "date_create": "Date Create",
@@ -69,6 +75,8 @@ var arrLang = {
         "close": "Close",
         "save": "Save",
         "question": "Question",
+        "type_question": "Question Type",
+        "multiple_choice_answer":"Option",
         "isCurrent": "Is Current",
         "target": "Target",
         "register": "Register",
@@ -110,6 +118,8 @@ var arrLang = {
         "close": "Đóng",
         "save": "Lưu thay đổi",
         "question": "Câu hỏi",
+        "type_question": "Loại câu hỏi",
+        "multiple_choice_answer": "Đáp án",
         "isCurrent": "Chọn làm bài thi hiện tại",
         "target": "Điểm tối đa",
         "register": "Đăng ký",
@@ -123,7 +133,8 @@ var arrLang = {
         "cancel": "Hủy",
         "delete": "Xóa",
         "confirm_delete": "Bạn có muốn xóa bài kiểm tra này không?",
-        "confirm_delete_exam_doing":"Bài thi này đã có người làm! Bạn có muốn xóa hết các bài đã làm không?"
+        "confirm_delete_exam_doing": "Bài thi này đã có người làm! Bạn có muốn xóa hết các bài đã làm không?",
+        "is_correct_answer": "Có phải là đáp án đúng không?"
     },
     "ja": {
         "name": "名前   :",
@@ -152,6 +163,8 @@ var arrLang = {
         "close": "Close",
         "save": "Save",
         "question": "問題",
+        "type_question": "Question Type",
+        "multiple_choice_answer": "Option",
         "isCurrent": "Is Current",
         "target": "Target",
         "register": "登録",
@@ -165,6 +178,7 @@ var arrLang = {
         "confirm_delete": "Do you want to delete now?",
         "cancel": "Cancel",
         "delete": "Delete",
-        "confirm_delete_exam_doing":"This exam has have a people doing. Do you want to delete all? "
+        "confirm_delete_exam_doing": "This exam has have a people doing. Do you want to delete all? ",
+        "is_correct_answer": "Is Correct Answer?"
     }
 };

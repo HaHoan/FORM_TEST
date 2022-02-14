@@ -22,6 +22,13 @@ namespace UMCFormTest.Controllers
                 using (var db = new UMC_TESTEntities())
                 {
                     var exam = db.EXAMs.Include("QUESTIONs").OrderByDescending(m => m.DateCreate).Where(m => m.IsCurrent == true).FirstOrDefault();
+                    foreach (var question in exam.QUESTIONs)
+                    {
+                        if (question.TYPE_QUESTION == "multiple_choice")
+                        {
+                            question.LIST_ANSWER = db.ANSWER_MULTICHOICE.Where(m => m.ID_QUESTION == question.ID).ToList();
+                        }
+                    }
                     var userTest = db.USER_TEST.Where(m => m.ID_Exam == exam.ID && m.StaffCode == user.StaffCode).FirstOrDefault();
                     if (userTest == null)
                     {
@@ -57,6 +64,14 @@ namespace UMCFormTest.Controllers
                     return RedirectToAction("Index");
                 }
                 userTest.USER_TEST_DETAIL = db.USER_TEST_DETAIL.Include("QUESTION").Where(m => m.ID_USER_TEST == Id).ToList();
+                foreach (var answer in userTest.USER_TEST_DETAIL)
+                {
+                    
+                    if (answer.QUESTION.TYPE_QUESTION == "multiple_choice")
+                    {
+                        answer.QUESTION.LIST_ANSWER = db.ANSWER_MULTICHOICE.Where(m => m.ID_QUESTION == answer.ID_QUESTION).ToList();
+                    }
+                }
                 return View(userTest);
             }
         }
@@ -384,7 +399,7 @@ namespace UMCFormTest.Controllers
                             var listAnswerDetail = db.USER_TEST_DETAIL.Where(m => m.ID_USER_TEST == userTest.ID).ToList();
                             db.USER_TEST_DETAIL.RemoveRange(listAnswerDetail);
                             db.USER_TEST.Remove(userTest);
-                            
+
                             db.SaveChanges();
                             transaction.Commit();
                         }
@@ -439,9 +454,9 @@ namespace UMCFormTest.Controllers
                         foreach (var answer in list)
                         {
                             var userTestDetail = db.USER_TEST_DETAIL.Where(m => m.ID_QUESTION == answer.index && m.ID_USER_TEST == userTest.ID).FirstOrDefault();
-                            if(userTestDetail != null)
+                            if (userTestDetail != null)
                             {
-                                userTestDetail.POINT = int.Parse(answer.point);
+                                userTestDetail.POINT = !string.IsNullOrEmpty(answer.point) ? int.Parse(answer.point) : 0 ;
                                 userTestDetail.COMMENT = answer.comment;
                             }
                             else
@@ -456,14 +471,14 @@ namespace UMCFormTest.Controllers
                                 };
                                 db.USER_TEST_DETAIL.Add(userTestDetail);
                             }
-                          
-                           
+
+
                         }
 
                         db.SaveChanges();
                         transaction.Commit();
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         transaction.Rollback();
                         ViewBag.Message = "Có lỗi xảy ra!";
@@ -478,7 +493,37 @@ namespace UMCFormTest.Controllers
 
 
         }
+        public ActionResult CreateExam(int Id = 0)
+        {
+            if (Id > 0)
+            {
+                using (var db = new UMC_TESTEntities())
+                {
+                    var exam = db.EXAMs.Where(m => m.ID == Id).Include(m => m.QUESTIONs).FirstOrDefault();
+                    if (exam == null)
+                    {
+                        return View("Error");
+                    }
+                    else
+                    {
+                        foreach(var question in exam.QUESTIONs)
+                        {
+                            if(question.TYPE_QUESTION == "multiple_choice")
+                            {
+                                question.LIST_ANSWER = db.ANSWER_MULTICHOICE.Where(m => m.ID_QUESTION == question.ID).ToList();
+                            }
+                        }
+                        return View(exam);
+                    }
+                }
 
+            }
+            else
+            {
+                return View();
+            }
+       
+        }
         public ActionResult ListExam()
         {
             if (user == null) return View("Login");
@@ -494,103 +539,130 @@ namespace UMCFormTest.Controllers
 
         public ActionResult AddExam(string name_exam_vi, string name_exam_ja, string list_question, string isCurrent, string target, string id_exam)
         {
-            try
+
+            if (user == null) return View("Login");
+            using (var db = new UMC_TESTEntities())
             {
-                if (user == null) return View("Login");
-                using (var db = new UMC_TESTEntities())
+                using (DbContextTransaction transaction = db.Database.BeginTransaction())
                 {
-
-                    var list = JsonConvert.DeserializeObject<List<Question>>(list_question);
-                    var examDb = new EXAM();
-                    if (!string.IsNullOrEmpty(id_exam))
+                    try
                     {
-                        var id = int.Parse(id_exam);
-
-                        var userTest = db.USER_TEST.Where(m => m.ID_Exam == id).FirstOrDefault();
-                        if (userTest != null)
+                        var list = JsonConvert.DeserializeObject<List<Question>>(list_question);
+                        var examDb = new EXAM();
+                        if (!string.IsNullOrEmpty(id_exam))
                         {
-                            if (isCurrent == "true")
+                            var id = int.Parse(id_exam);
+                            var userTest = db.USER_TEST.Where(m => m.ID_Exam == id).FirstOrDefault();
+                            if (userTest != null)
                             {
-                                examDb = db.EXAMs.Where(m => m.ID == id).FirstOrDefault();
-                                examDb.IsCurrent = isCurrent == "true" ? true : false;
-                                db.SaveChanges();
-                                var listExam = db.EXAMs.Where(m => m.IsCurrent == true && m.ID != examDb.ID).ToList();
-                                foreach (var e in listExam)
+                                if (isCurrent == "true")
                                 {
-                                    e.IsCurrent = false;
+                                    examDb = db.EXAMs.Where(m => m.ID == id).FirstOrDefault();
+                                    examDb.IsCurrent = isCurrent == "true" ? true : false;
                                     db.SaveChanges();
+                                    var listExam = db.EXAMs.Where(m => m.IsCurrent == true && m.ID != examDb.ID).ToList();
+                                    foreach (var e in listExam)
+                                    {
+                                        e.IsCurrent = false;
+                                        db.SaveChanges();
+                                    }
                                 }
+                                return RedirectToAction("ListExam");
                             }
-                            return RedirectToAction("ListExam");
-                        }
 
-                        examDb = db.EXAMs.Where(m => m.ID == id).FirstOrDefault();
-                        examDb.Name = JsonConvert.SerializeObject(new Question()
-                        {
-                            vi = name_exam_vi,
-                            ja = name_exam_ja
-                        });
-                        examDb.DateCreate = DateTime.Now;
-                        examDb.IsCurrent = isCurrent == "true" ? true : false;
-                        examDb.Target = int.Parse(target);
-                        db.SaveChanges();
-                        var ques = db.QUESTIONs.Where(m => m.ID_EXAM == examDb.ID).ToList();
-                        foreach (var item in ques)
-                        {
-                            db.QUESTIONs.Remove(item);
-                        }
-                    }
-                    else
-                    {
-                        var exam = new EXAM()
-                        {
-                            Name = JsonConvert.SerializeObject(new Question()
+                            examDb = db.EXAMs.Where(m => m.ID == id).FirstOrDefault();
+                            examDb.Name = JsonConvert.SerializeObject(new Question()
                             {
                                 vi = name_exam_vi,
                                 ja = name_exam_ja
-                            }),
-                            DateCreate = DateTime.Now,
-                            IsCurrent = isCurrent == "true" ? true : false,
-                            Target = int.Parse(target)
-                        };
-                        examDb = db.EXAMs.Add(exam);
-                        db.SaveChanges();
-
-                    }
-
-                    if (examDb.IsCurrent == true)
-                    {
-                        var listExam = db.EXAMs.Where(m => m.IsCurrent == true && m.ID != examDb.ID).ToList();
-                        foreach (var e in listExam)
-                        {
-                            e.IsCurrent = false;
+                            });
+                            examDb.DateCreate = DateTime.Now;
+                            examDb.IsCurrent = isCurrent == "true" ? true : false;
+                            examDb.Target = int.Parse(target);
                             db.SaveChanges();
+                            var ques = db.QUESTIONs.Where(m => m.ID_EXAM == examDb.ID).ToList();
+                            foreach (var item in ques)
+                            {
+                                db.QUESTIONs.Remove(item);
+                            }
                         }
-                    }
-                    foreach (var question in list)
-                    {
-                        var ques = new QUESTION()
+                        else
                         {
-                            ID_EXAM = examDb.ID,
-                            Question1 = JsonConvert.SerializeObject(question),
-                            DateCreate = DateTime.Now
-                        };
-                        db.QUESTIONs.Add(ques);
-                        db.SaveChanges();
+                            var exam = new EXAM()
+                            {
+                                Name = JsonConvert.SerializeObject(new Question()
+                                {
+                                    vi = name_exam_vi,
+                                    ja = name_exam_ja
+                                }),
+                                DateCreate = DateTime.Now,
+                                IsCurrent = isCurrent == "true" ? true : false,
+                                Target = int.Parse(target)
+                            };
+                            examDb = db.EXAMs.Add(exam);
+                            db.SaveChanges();
+
+                        }
+
+                        if (examDb.IsCurrent == true)
+                        {
+                            var listExam = db.EXAMs.Where(m => m.IsCurrent == true && m.ID != examDb.ID).ToList();
+                            foreach (var e in listExam)
+                            {
+                                e.IsCurrent = false;
+                                db.SaveChanges();
+                            }
+                        }
+                        foreach (var question in list)
+                        {
+                            var ques = new QUESTION()
+                            {
+                                ID_EXAM = examDb.ID,
+                                Question1 = JsonConvert.SerializeObject(new Question()
+                                {
+                                    vi = question.vi,
+                                    ja = question.ja,
+                                    index = question.index
+                                }),
+                                DateCreate = DateTime.Now,
+                                TYPE_QUESTION = question.type_question
+                            };
+                            db.QUESTIONs.Add(ques);
+                            db.SaveChanges();
+                            if (question.list_answer != null && question.list_answer.Count > 0)
+                            {
+                                foreach (var answerMulti in question.list_answer)
+                                {
+                                    var answer = new ANSWER_MULTICHOICE()
+                                    {
+                                        ID_QUESTION = ques.ID,
+                                        NO = answerMulti.index,
+                                        ANSWER = JsonConvert.SerializeObject(answerMulti),
+                                        CORRECT_ANSWER = answerMulti.isCorrect
+                                        
+                                    };
+                                    db.ANSWER_MULTICHOICE.Add(answer);
+                                    db.SaveChanges();
+                                }
+
+                            }
+
+                        }
+                        transaction.Commit();
+                        return RedirectToAction("ListExam");
+
                     }
-                    return RedirectToAction("ListExam");
-
-
-
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        ViewBag.Messagee = e.Message.ToString();
+                        return View("Error");
+                    }
 
                 }
 
             }
-            catch (Exception e)
-            {
-                ViewBag.Messagee = e.Message.ToString();
-                return View("Error");
-            }
+
 
         }
 

@@ -18,10 +18,10 @@ namespace UMCFormTest.Database
         public int ID_USER_TEST { get; set; }
         public int ID_QUESTION { get; set; }
         public string ANSWER { get; set; }
-        public string COMMENT { get; set; }
         public int POINT { get; set; }
+        public string COMMENT { get; set; }
     
-        public virtual QUESTION QUESTION { get; set; }
         public virtual USER_TEST USER_TEST { get; set; }
+        public virtual QUESTION QUESTION { get; set; }
     }
 }

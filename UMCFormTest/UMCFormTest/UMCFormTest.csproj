@@ -151,6 +151,9 @@
     <Compile Include="Broadcast\Notice.cs" />
     <Compile Include="Controllers\Constant.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Database\ANSWER_MULTICHOICE.cs">
+      <DependentUpon>USER_TEST.tt</DependentUpon>
+    </Compile>
     <Compile Include="Database\EXAM.cs">
       <DependentUpon>USER_TEST.tt</DependentUpon>
     </Compile>
@@ -158,9 +161,6 @@
       <DependentUpon>USER_TEST.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\STAFF.cs">
-      <DependentUpon>USER_TEST.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Database\sysdiagram.cs">
       <DependentUpon>USER_TEST.tt</DependentUpon>
     </Compile>
     <Compile Include="Database\USER_TEST.Context.cs">
@@ -378,6 +378,7 @@
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\create_exam.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap.min.js" />
     <Content Include="Scripts\DataTables\autoFill.bootstrap4.js" />
@@ -608,6 +609,7 @@
     <Content Include="Views\Home\Register.cshtml" />
     <Content Include="Views\Home\ChangePassword.cshtml" />
     <Content Include="Views\Home\ShowPDF.cshtml" />
+    <Content Include="Views\Home\CreateExam.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

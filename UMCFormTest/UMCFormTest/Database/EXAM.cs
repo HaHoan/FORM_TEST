@@ -17,8 +17,8 @@ namespace UMCFormTest.Database
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public EXAM()
         {
-            this.QUESTIONs = new HashSet<QUESTION>();
             this.USER_TEST = new HashSet<USER_TEST>();
+            this.QUESTIONs = new HashSet<QUESTION>();
         }
     
         public int ID { get; set; }
@@ -28,8 +28,8 @@ namespace UMCFormTest.Database
         public Nullable<int> Target { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<QUESTION> QUESTIONs { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<USER_TEST> USER_TEST { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<QUESTION> QUESTIONs { get; set; }
     }
 }

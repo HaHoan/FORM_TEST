@@ -11,8 +11,9 @@
     <link href="~/Content/DataTables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
 }
 <br />
-<div class="row">
-    <div class="col-4">
+<div class="container">
+    <a class="btn btn-success" href="@Url.Action("CreateExam", "Home")">Thêm Bài Thi Mới</a>
+    <div class="mt-2">
         @if (Model != null && Model.Count > 0)
         {
 
@@ -46,8 +47,8 @@
                                         try
                                         {
                                             var name = JsonConvert.DeserializeObject<Question>(exam.Name);
-                                            <a class="d-none" id=@("name_vi") name=@("name_title_" + exam.ID) href="javascript:void(0);"><span class="text-center " key="question"></span>@(name.vi)</a>
-                                            <a class="d-none" id=@("name_ja") name=@("name_title_" + exam.ID) href="javascript:void(0);"><span class="text-center" key="question"></span>@(name.ja)</a>
+                                            <a class="d-none" id=@("name_vi") name=@("name_title_" + exam.ID) href="@Url.Action("CreateExam","Home", new { Id = exam.ID })")"><span class="text-center " key="question"></span>@(name.vi)</a>
+                                            <a class="d-none" id=@("name_ja") name=@("name_title_" + exam.ID) href="@Url.Action("CreateExam","Home", new { Id = exam.ID })")"><span class="text-center" key="question"></span>@(name.ja)</a>
                                         }
                                         catch (Exception)
                                         {
@@ -69,46 +70,7 @@
         }
 
     </div>
-    <div class="col-8">
-        @using (Html.BeginForm("AddExam", "Home", FormMethod.Post, new { id = "add_form" }))
-        {
-            @Html.ValidationSummary();
-            <input type="hidden" name="id_exam" />
-            <label class="lang font-weight-bold" key="name_exam"></label>
-            <textarea class="form-control mt-1" name="name_exam_vi" placeholder="Tiếng Việt"></textarea>
-            <textarea class="form-control mt-2" name="name_exam_ja" placeholder="Tiếng Nhật"></textarea>
-            <br />
-            <div class="list_question">
-                @for (int i = 1; i <= 5; i++)
-                {
-                    <div id=@("form_" + i)>
-
-                        <label class="lang font-weight-bold mt-2" key="question" id=@("label_" + i)></label><span class="font-weight-bold" id=@("question_" + i)> @i</span>
-                        <button class="btn-delete text-danger font-weight-bold  " id=@("question_delete_" + i) name=@i>x</button>
-                        <textarea class="form-control mt-1" placeholder="Tiếng Việt" id=@("question_" + i + "_vi")></textarea>
-                        <textarea class="form-control mt-1" placeholder="Tiếng Nhật" id=@("question_" + i + "_ja")></textarea>
-                    </div>
-
-                }
-            </div>
-
-            <input type="hidden" name="list_question" id="list_question" />
-            <button class="btn btn-light" id="btn_add_question" type="button">
-                <i class="fas fa-plus"></i>
-            </button>
-
-            <hr />
-            <label class="lang font-weight-bold mt-1" key="target"></label>
-            <input class="form-control mt-1 type_number" name="target" required />
-            <input class="" type="checkbox" value="true" id="isCurrent" name="isCurrent" checked>
-            <label class=" lang mt-1" for="isCurrent" key="isCurrent">  </label>
-            <br />
-            <button class="btn btn-success lang" key="save" type="button" id="add_submit"></button>
-            <button class="btn btn-danger lang d-none" key="delete" type="button" id="btn_delete_exam"></button>
-
-        }
-        <br />
-    </div>
+   
 </div>
 
 <!-- Modal -->

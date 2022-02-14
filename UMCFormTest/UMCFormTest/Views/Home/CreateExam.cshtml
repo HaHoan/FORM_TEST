@@ -1,0 +1,195 @@
+﻿@model UMCFormTest.Database.EXAM
+@using Newtonsoft.Json
+@using UMCFormTest.Models
+@{
+    ViewBag.Title = "CreateExam";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    @using (Html.BeginForm("AddExam", "Home", FormMethod.Post, new { id = "add_form" }))
+    {
+        @Html.ValidationSummary();
+        <input type="hidden" name="id_exam" />
+        <label class="lang font-weight-bold" key="name_exam"></label>
+        if (Model == null)
+        {
+            <textarea class="form-control mt-1" name="name_exam_vi" placeholder="Tiếng Việt"></textarea>
+            <textarea class="form-control mt-2" name="name_exam_ja" placeholder="Tiếng Nhật"></textarea>
+            <br />
+        }
+        else
+        {
+            var name = JsonConvert.DeserializeObject<Question>(Model.Name);
+
+            <textarea class="form-control mt-1" name="name_exam_vi" placeholder="Tiếng Việt" value="@name.vi">@name.vi</textarea>
+            <textarea class="form-control mt-2" name="name_exam_ja" placeholder="Tiếng Nhật" value="@name.ja">@name.ja</textarea>
+            <br />
+        }
+
+        if (Model == null)
+        {
+            <div class="list_question">
+                @{
+                    var i = 1;
+                }
+                <div class="row bg-light mt-5 p-2" id=@("form_" + i)>
+                    <div class="col">
+                        <label class="lang font-weight-bold mt-2" key="question" id=@("label_" + i)></label>
+                        <span class="font-weight-bold" id=@("question_" + i)> @i</span>
+                        <button class="btn-delete text-danger font-weight-bold  " id=@("question_delete_" + i) name=@i>x</button>
+                        <textarea class="form-control mt-1" placeholder="Tiếng Việt" id=@("question_" + i + "_vi")></textarea>
+                        <textarea class="form-control mt-1" placeholder="Tiếng Nhật" id=@("question_" + i + "_ja")></textarea>
+                        <div id=@("list_multiple_choice_" + i)>
+                        </div>
+                        <a href="javascript:void(0)" class="d-none" id=@("add_answer_"+i) name=@(i)> Thêm đáp án</a>
+                    </div>
+                    <div class="col-2">
+                        <label class="lang font-weight-bold mt-2" key="type_question"></label>
+
+                        <select class="form-control mt-1" id=@("type_question_" + i) name=@(i)>
+                            <option value="text">Tự luận</option>
+                            <option value="multiple_choice">Trắc nghiệm</option>
+                        </select>
+                    </div>
+                </div>
+
+
+            </div>
+
+        }
+        else
+        {
+            <div class="list_question">
+                @{
+                    var i = 1;
+                }
+                @foreach (var question in Model.QUESTIONs)
+                {
+                    var questionContent = JsonConvert.DeserializeObject<Question>(question.Question1);
+                    var bg = " bg-light";
+                    if (i % 2 == 0)
+                    {
+                        bg = "bg-white";
+                    }
+                    <div class="@("row " + bg + " mt-5 p-2")" id=@("form_" + i)>
+                        <div class="col">
+                            <label class=" lang font-weight-bold mt-2" key="question" id=@("label_" + i)></label>
+                            <span class="font-weight-bold" id=@("question_" + i)> @i</span>
+                            <button class="btn-delete text-danger font-weight-bold  " id=@("question_delete_" + i) name=@i>x</button>
+                            <textarea class="form-control mt-1" placeholder="Tiếng Việt" id=@("question_" + i + "_vi") value="@questionContent.vi">@questionContent.vi</textarea>
+                            <textarea class="form-control mt-1" placeholder="Tiếng Nhật" id=@("question_" + i + "_ja") value="@questionContent.ja">@questionContent.ja</textarea>
+                            <br />
+                            <div id=@("list_multiple_choice_" + i)>
+                                @if (question.TYPE_QUESTION == "multiple_choice")
+                                {
+                                    var no = 1;
+                                    foreach (var answer in question.LIST_ANSWER)
+                                    {
+                                        var answerContent = JsonConvert.DeserializeObject<Question>(answer.ANSWER);
+                                        <div class="multiple_choice mb-3">
+                                            <label class="lang font-italic mt-2" key="multiple_choice_answer">
+                                                Đáp án
+                                            </label>
+                                            <span class="font-italic" id="@("answer_no_"+i+"_"+no)">@no </span>
+                                            <button class="btn-delete font-weight-bold" id="@("answer_delete_"+i+"_"+no)"
+                                                    name="@(i + "_" + no)" onclick="deleteAnswer(this)">
+                                                x
+                                            </button>
+
+                                            <textarea class="form-control mt-1" placeholder="Tiếng Việt" id="@("answer_"+i+"_"+no + "_vi")" value="@answerContent.vi">@answerContent.vi</textarea>
+                                            <textarea class="form-control mt-1" placeholder="Tiếng Nhật" id="@("answer_"+i+"_"+no + "_ja")" value="@answerContent.ja">@answerContent.ja</textarea>
+                                            <div class="form-check">
+                                                @if (answer.CORRECT_ANSWER)
+                                                {
+                                                    <input class="form-check-input" type="checkbox" id="@("correct_answer_"+i+"_"+no)" checked />
+                                                }
+                                                else
+                                                {
+                                                    <input class="form-check-input" type="checkbox" id="@("correct_answer_"+i+"_"+no)" />
+                                                }
+
+                                                <label class="form-check-label lang" key="is_correct_answer">Chọn làm dáp án đúng</label>
+                                            </div>
+
+                                        </div>
+                                        no++;
+                                    }
+                                }
+                            </div>
+                            @if (question.TYPE_QUESTION == "multiple_choice")
+                            {
+                                <a href="javascript:void(0)" class="" id=@("add_answer_"+i) name=@(i)> Thêm đáp án</a>
+                            }
+                            else
+                            {
+                                <a href="javascript:void(0)" class="d-none" id=@("add_answer_"+i) name=@(i)> Thêm đáp án</a>
+                            }
+
+                        </div>
+
+                        <div class="col-2">
+                            <label class="lang font-weight-bold mt-2" key="type_question"></label>
+
+                            <select class="form-control mt-1" id=@("type_question_" + i) name=@(i)>
+                                @if (question.TYPE_QUESTION == "text")
+                                {
+                                    <option value="text" selected>Tự luận</option>
+                                }
+                                else
+                                {
+                                    <option value="text">Tự luận</option>
+                                }
+                                @if (question.TYPE_QUESTION == "multiple_choice")
+                                {
+                                    <option value="multiple_choice" selected>Trắc nghiệm</option>
+                                }
+                                else
+                                {
+                                    <option value="multiple_choice">Trắc nghiệm</option>
+                                }
+
+
+                            </select>
+                        </div>
+                    </div>
+                    i++;
+
+                }
+
+
+            </div>
+
+        }
+
+        <input type="hidden" name="list_question" id="list_question" />
+        <button class="btn btn-light" id="btn_add_question" type="button">
+            <i class="fas fa-plus"></i>
+        </button>
+
+        <hr />
+        <label class="lang font-weight-bold mt-1" key="target"></label>
+        if (Model == null)
+        {
+            <input class="form-control mt-1 type_number" name="target" required />
+            <input class="" type="checkbox" value="true" id="isCurrent" name="isCurrent" checked>
+        }
+        else
+        {
+            <input class="form-control mt-1 type_number" name="target" value="@Model.Target" required />
+            @Html.CheckBoxFor(m => m.IsCurrent, new { name = "isCurrent" })
+
+        }
+
+        <label class=" lang mt-1" for="IsCurrent" key="isCurrent">  </label>
+        <br />
+        <button class="btn btn-success lang" key="save" type="button" id="add_submit"></button>
+        <button class="btn btn-danger lang d-none" key="delete" type="button" id="btn_delete_exam"></button>
+
+    }
+    <br />
+</div>
+
+@section scripts{
+    <script src="~/Scripts/create_exam.js"></script>
+}

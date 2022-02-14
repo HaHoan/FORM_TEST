@@ -15,7 +15,7 @@
 <div class="container">
     @if (user != null && Model != null)
     {
-        using (Html.BeginForm("Mark", "Home", FormMethod.Post, new { Id = "review-form"}))
+        using (Html.BeginForm("Mark", "Home", FormMethod.Post, new { Id = "review-form" }))
         {
             <input type="hidden" name="ID_USER_TEST" value="@Model.ID" />
             <div class="row mt-5 border border-dark font-weight-bold">
@@ -142,9 +142,6 @@
                 <h4 class=" text-center font-italic font-weight-bold">@Model.EXAM.Name</h4>
             }
 
-
-
-
             var i = 0;
             foreach (var answer in Model.USER_TEST_DETAIL)
             {
@@ -157,8 +154,8 @@
                         {
                             var ques = JsonConvert.DeserializeObject<Question>(answer.QUESTION.Question1);
 
-                            <p class="d-none" id=@("question_vi_" + i)><span class="lang" key="question"></span>@(" " + i + ". " + ques.vi)</p>
-                            <p class="d-none" id=@("question_ja_" + i)><span class="lang" key="question"></span>@(" " + i + ". " + ques.ja)</p>
+                            <p class="d-none font-weight-bold" id=@("question_vi_" + i)><span class="lang" key="question"></span>@(" " + i + ". " + ques.vi)</p>
+                            <p class="d-none font-weight-bold" id=@("question_ja_" + i)><span class="lang" key="question"></span>@(" " + i + ". " + ques.ja)</p>
 
                         }
                         catch (Exception)
@@ -168,14 +165,46 @@
 
                     }
                     <input type="hidden" id=@("question_" + i) value="@answer.QUESTION.ID">
-                    <textarea class="form-control bg-white" name=@("answer_" + i) rows="4" readonly>@answer.ANSWER</textarea>
                 </div>
+                if (answer.QUESTION.TYPE_QUESTION == "text")
+                {
+                    <textarea class="form-control bg-white" name=@("answer_" + i) rows="4" readonly>@answer.ANSWER</textarea>
+                }
+                else if (answer.QUESTION.TYPE_QUESTION == "multiple_choice")
+                {
+                    foreach (var multiAnswer in answer.QUESTION.LIST_ANSWER)
+                    {
+                        var an = JsonConvert.DeserializeObject<Question>(multiAnswer.ANSWER);
+                        <div class="form-check">
+                            @if (answer.ANSWER == multiAnswer.NO.ToString())
+                            {
+                                <input class="form-check-input" type="radio" name="@i"
+                                       id="@("multiple_choice_" + i + "_" + multiAnswer.NO)" checked disabled>
+                            }
+                            else
+                            {
+                                <input class="form-check-input" type="radio" name="@i"
+                                       id="@("multiple_choice_" + i + "_" + multiAnswer.NO)" disabled>
+                            }
+
+                            <label class="form-check-label d-none" name="form_multiple_choice_vi">
+                                @an.vi
+                            </label>
+                            <label class="form-check-label d-none" name="form_multiple_choice_ja">
+                                @an.ja
+                            </label>
+                        </div>
+
+                    }
+                    <textarea class="form-control bg-white d-none" name=@("answer_" + i) rows="4" readonly>@answer.ANSWER</textarea>
+
+                }
                 if (user.StaffCode != Model.STAFF.StaffCode && Model.Mark == null && user.IsReviewer)
                 {
                     <div class="row mt-3">
                         <br />
                         <label>ĐIỂM</label>
-                        <input class="form-control" id="@("point_" + i)"/>
+                        <input class="form-control" id="@("point_" + i)" />
                         <br />
                         <label>COMMENT</label>
                         <textarea class="form-control bg-white" rows="4" id="@("comment_" + i)">@answer.COMMENT</textarea>
@@ -186,14 +215,14 @@
                 else
                 {
                     <div class="row mt-3">
-                       
+
                         <p>
                             ĐIỂM : @answer.POINT
                             <br />
                             COMMENT
                             <br />
                         </p>
-                     
+
                         <textarea class="form-control bg-white" rows="4" readonly>@answer.COMMENT</textarea>
                         <br />
 

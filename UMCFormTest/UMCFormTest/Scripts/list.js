@@ -1,6 +1,11 @@
 ﻿$(function () {
     $('#btn_add_question').click(function () {
-        addQuestion($(this).attr('name'));
+        if (confirm('Bạn có muốn tạo câu hỏi trắc nghiệm?')) {
+            addQuestionMultiChoice();
+        } else {
+            addQuestion();
+        }
+       
         var lang = localStorage.getItem('lang') || 'en';
         changeLanguage(lang);
     })
@@ -67,7 +72,7 @@
     })
 
 })
-function addQuestion(index) {
+function addQuestion() {
     var number = $(".list_question label").length;
     number = number + 1;
     var div = $('<div />', {
@@ -91,7 +96,7 @@ function addQuestion(index) {
         text: 'x',
         class: 'btn-delete text-danger font-weight-bold ml-1',
         click: function (e) {
-            deleteRow(index)
+            deleteRow($(this).attr('name'))
         },
         name: number
     });
@@ -123,15 +128,33 @@ function getQuestions() {
         var i = value.id.substring(5, value.id.length)
         var questionVi = $('#question_' + i + "_vi").val()
         var questionJa = $('#question_' + i + "_ja").val()
+        var type_question = $('#type_question_' + i).val()
         if (questionVi != '' && questionJa != '') {
+            var list_answer = []
+            $('.list_multiple_choice_' + i + ' .multiple_choice').each(function (index, value) {
+                var no = index + 1
+                var answerNo = no
+                var answerVi = $('#answer_'+i+'_'+no+'_vi').val()
+                var answerJa = $('#answer_'+i+'_'+no+'_ja').val()
+                var correcAnswer = $('#correct_answer_' + i + '_' + no).is(':checked')
+                var answer = {
+                    answerNo: answerNo,
+                    answerVi: answerVi,
+                    answerJa: answerJa,
+                    correcAnswer: correcAnswer
+                }
+                list_answer.append(answer)
+            })
             var obj = {
                 index: index,
                 vi: questionVi,
-                ja: questionJa
+                ja: questionJa,
+                type: type_question,
+                answers:list_answer
             }
             list.push(obj)
         }
-
+     
     })
     return list;
 }
@@ -151,7 +174,7 @@ function getExamDetail(Id) {
             var currentRow = $('[id^="form_"]').length;
             if (currentRow < length) {
                 for (var a = currentRow; a < length; a++) {
-                    addQuestion(a)
+                    addQuestion()
                 }
             }
             $.each(response.question, function (i, value) {

@@ -30,7 +30,15 @@
     $(".type_number").keypress(function (e) {
         return onlyNumber(e)
     });
-    
+    $('input[id^="multiple_choice_"').click(function (e) {
+        var id = $(this).attr('id')
+        var lastIndex = id.lastIndexOf('_')
+        var no = id.substr(lastIndex + 1, id.length - lastIndex - 1)
+        var answer = $("#" + id + ":checked").val();
+        if (answer == 'on') {
+            $('textarea[name="answer_' + $(this).attr('name') + '"]').val(no)
+        }
+    });
 })
 
 function getAnswers() {
@@ -48,7 +56,10 @@ function getAnswers() {
 
         var comment = $('#comment_' + (index + 1)).val()
         if (comment == null) comment = ""
-       
+        var type_question = $('#type_question_' + (index + 1)).val()
+        if (type_question == 'text') {
+
+        }
         var obj = {
             index: question,
             value: value,

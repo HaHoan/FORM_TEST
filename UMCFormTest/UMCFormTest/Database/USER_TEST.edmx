@@ -5,6 +5,16 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="UMC_TESTModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ANSWER_MULTICHOICE">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ID_QUESTION" Type="int" Nullable="false" />
+          <Property Name="NO" Type="int" Nullable="false" />
+          <Property Name="ANSWER" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="CORRECT_ANSWER" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="EXAM">
           <Key>
             <PropertyRef Name="ID" />
@@ -20,9 +30,10 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="Question" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="Question" Type="nvarchar(max)" Nullable="false" />
           <Property Name="DateCreate" Type="datetime" Nullable="false" />
           <Property Name="ID_EXAM" Type="int" Nullable="false" />
+          <Property Name="TYPE_QUESTION" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="STAFF">
           <Key>
@@ -33,16 +44,6 @@
           <Property Name="Dept" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Password" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="IsReviewer" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="USER_TEST">
           <Key>
@@ -63,8 +64,8 @@
           <Property Name="ID_USER_TEST" Type="int" Nullable="false" />
           <Property Name="ID_QUESTION" Type="int" Nullable="false" />
           <Property Name="ANSWER" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="POINT" Type="int" Nullable="false" />
           <Property Name="COMMENT" Type="nvarchar(max)" />
+          <Property Name="POINT" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_DETAILQUESTION1">
           <End Role="QUESTION" Type="Self.QUESTION" Multiplicity="1" />
@@ -127,10 +128,10 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="UMC_TESTModelStoreContainer">
+          <EntitySet Name="ANSWER_MULTICHOICE" EntityType="Self.ANSWER_MULTICHOICE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EXAM" EntityType="Self.EXAM" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="QUESTION" EntityType="Self.QUESTION" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="STAFF" EntityType="Self.STAFF" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="USER_TEST" EntityType="Self.USER_TEST" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="USER_TEST_DETAIL" EntityType="Self.USER_TEST_DETAIL" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_DETAILQUESTION1" Association="Self.FK_DETAILQUESTION1">
@@ -158,18 +159,7 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="UMC_TESTModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
         <EntityContainer Name="UMC_TESTEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
           <EntitySet Name="USER_TEST" EntityType="UMC_TESTModel.USER_TEST" />
           <EntitySet Name="STAFFs" EntityType="UMC_TESTModel.STAFF" />
           <AssociationSet Name="FK_TESTSTAFF" Association="UMC_TESTModel.FK_TESTSTAFF">
@@ -177,22 +167,23 @@
             <End Role="USER_TEST" EntitySet="USER_TEST" />
           </AssociationSet>
           <EntitySet Name="EXAMs" EntityType="UMC_TESTModel.EXAM" />
-          <EntitySet Name="QUESTIONs" EntityType="UMC_TESTModel.QUESTION" />
-          <AssociationSet Name="FK_EXAMQUESTION" Association="UMC_TESTModel.FK_EXAMQUESTION">
-            <End Role="EXAM" EntitySet="EXAMs" />
-            <End Role="QUESTION" EntitySet="QUESTIONs" />
-          </AssociationSet>
           <AssociationSet Name="FK_EXAMUSERTEST" Association="UMC_TESTModel.FK_EXAMUSERTEST">
             <End Role="EXAM" EntitySet="EXAMs" />
             <End Role="USER_TEST" EntitySet="USER_TEST" />
           </AssociationSet>
           <EntitySet Name="USER_TEST_DETAIL" EntityType="UMC_TESTModel.USER_TEST_DETAIL" />
-          <AssociationSet Name="FK_DETAILQUESTION1" Association="UMC_TESTModel.FK_DETAILQUESTION1">
-            <End Role="QUESTION" EntitySet="QUESTIONs" />
-            <End Role="USER_TEST_DETAIL" EntitySet="USER_TEST_DETAIL" />
-          </AssociationSet>
           <AssociationSet Name="FK_DETAILTEST" Association="UMC_TESTModel.FK_DETAILTEST">
             <End Role="USER_TEST" EntitySet="USER_TEST" />
+            <End Role="USER_TEST_DETAIL" EntitySet="USER_TEST_DETAIL" />
+          </AssociationSet>
+          <EntitySet Name="ANSWER_MULTICHOICE" EntityType="UMC_TESTModel.ANSWER_MULTICHOICE" />
+          <EntitySet Name="QUESTIONs" EntityType="UMC_TESTModel.QUESTION" />
+          <AssociationSet Name="FK_EXAMQUESTION" Association="UMC_TESTModel.FK_EXAMQUESTION">
+            <End Role="EXAM" EntitySet="EXAMs" />
+            <End Role="QUESTION" EntitySet="QUESTIONs" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DETAILQUESTION1" Association="UMC_TESTModel.FK_DETAILQUESTION1">
+            <End Role="QUESTION" EntitySet="QUESTIONs" />
             <End Role="USER_TEST_DETAIL" EntitySet="USER_TEST_DETAIL" />
           </AssociationSet>
           </EntityContainer>
@@ -242,32 +233,9 @@
           <Property Name="DateCreate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="IsCurrent" Type="Boolean" Nullable="false" />
           <Property Name="Target" Type="Int32" />
-          <NavigationProperty Name="QUESTIONs" Relationship="UMC_TESTModel.FK_EXAMQUESTION" FromRole="EXAM" ToRole="QUESTION" />
           <NavigationProperty Name="USER_TEST" Relationship="UMC_TESTModel.FK_EXAMUSERTEST" FromRole="EXAM" ToRole="USER_TEST" />
+          <NavigationProperty Name="QUESTIONs" Relationship="UMC_TESTModel.FK_EXAMQUESTION" FromRole="EXAM" ToRole="QUESTION" />
         </EntityType>
-        <EntityType Name="QUESTION">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Question1" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="DateCreate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="ID_EXAM" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="EXAM" Relationship="UMC_TESTModel.FK_EXAMQUESTION" FromRole="QUESTION" ToRole="EXAM" />
-          <NavigationProperty Name="USER_TEST_DETAIL" Relationship="UMC_TESTModel.FK_DETAILQUESTION1" FromRole="QUESTION" ToRole="USER_TEST_DETAIL" />
-        </EntityType>
-        <Association Name="FK_EXAMQUESTION">
-          <End Type="UMC_TESTModel.EXAM" Role="EXAM" Multiplicity="1" />
-          <End Type="UMC_TESTModel.QUESTION" Role="QUESTION" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="EXAM">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="QUESTION">
-              <PropertyRef Name="ID_EXAM" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_EXAMUSERTEST">
           <End Type="UMC_TESTModel.EXAM" Role="EXAM" Multiplicity="1" />
           <End Type="UMC_TESTModel.USER_TEST" Role="USER_TEST" Multiplicity="*" />
@@ -290,21 +258,9 @@
           <Property Name="ANSWER" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="POINT" Type="Int32" Nullable="false" />
           <Property Name="COMMENT" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="QUESTION" Relationship="UMC_TESTModel.FK_DETAILQUESTION1" FromRole="USER_TEST_DETAIL" ToRole="QUESTION" />
           <NavigationProperty Name="USER_TEST" Relationship="UMC_TESTModel.FK_DETAILTEST" FromRole="USER_TEST_DETAIL" ToRole="USER_TEST" />
+          <NavigationProperty Name="QUESTION" Relationship="UMC_TESTModel.FK_DETAILQUESTION1" FromRole="USER_TEST_DETAIL" ToRole="QUESTION" />
         </EntityType>
-        <Association Name="FK_DETAILQUESTION1">
-          <End Type="UMC_TESTModel.QUESTION" Role="QUESTION" Multiplicity="1" />
-          <End Type="UMC_TESTModel.USER_TEST_DETAIL" Role="USER_TEST_DETAIL" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="QUESTION">
-              <PropertyRef Name="ID" />
-            </Principal>
-            <Dependent Role="USER_TEST_DETAIL">
-              <PropertyRef Name="ID_QUESTION" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_DETAILTEST">
           <End Type="UMC_TESTModel.USER_TEST" Role="USER_TEST" Multiplicity="1" />
           <End Type="UMC_TESTModel.USER_TEST_DETAIL" Role="USER_TEST_DETAIL" Multiplicity="*" />
@@ -317,23 +273,58 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="ANSWER_MULTICHOICE">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ID_QUESTION" Type="Int32" Nullable="false" />
+          <Property Name="NO" Type="Int32" Nullable="false" />
+          <Property Name="ANSWER" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CORRECT_ANSWER" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="QUESTION">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Question1" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreate" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ID_EXAM" Type="Int32" Nullable="false" />
+          <Property Name="TYPE_QUESTION" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="EXAM" Relationship="UMC_TESTModel.FK_EXAMQUESTION" FromRole="QUESTION" ToRole="EXAM" />
+          <NavigationProperty Name="USER_TEST_DETAIL" Relationship="UMC_TESTModel.FK_DETAILQUESTION1" FromRole="QUESTION" ToRole="USER_TEST_DETAIL" />
+        </EntityType>
+        <Association Name="FK_EXAMQUESTION">
+          <End Type="UMC_TESTModel.EXAM" Role="EXAM" Multiplicity="1" />
+          <End Type="UMC_TESTModel.QUESTION" Role="QUESTION" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EXAM">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="QUESTION">
+              <PropertyRef Name="ID_EXAM" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DETAILQUESTION1">
+          <End Type="UMC_TESTModel.QUESTION" Role="QUESTION" Multiplicity="1" />
+          <End Type="UMC_TESTModel.USER_TEST_DETAIL" Role="USER_TEST_DETAIL" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QUESTION">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="USER_TEST_DETAIL">
+              <PropertyRef Name="ID_QUESTION" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="UMC_TESTModelStoreContainer" CdmEntityContainer="UMC_TESTEntities">
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="UMC_TESTModel.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="name" ColumnName="name" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="USER_TEST">
             <EntityTypeMapping TypeName="UMC_TESTModel.USER_TEST">
               <MappingFragment StoreEntitySet="USER_TEST">
@@ -368,16 +359,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="QUESTIONs">
-            <EntityTypeMapping TypeName="UMC_TESTModel.QUESTION">
-              <MappingFragment StoreEntitySet="QUESTION">
-                <ScalarProperty Name="ID_EXAM" ColumnName="ID_EXAM" />
-                <ScalarProperty Name="DateCreate" ColumnName="DateCreate" />
-                <ScalarProperty Name="Question1" ColumnName="Question" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="USER_TEST_DETAIL">
             <EntityTypeMapping TypeName="UMC_TESTModel.USER_TEST_DETAIL">
               <MappingFragment StoreEntitySet="USER_TEST_DETAIL">
@@ -386,6 +367,28 @@
                 <ScalarProperty Name="ANSWER" ColumnName="ANSWER" />
                 <ScalarProperty Name="ID_QUESTION" ColumnName="ID_QUESTION" />
                 <ScalarProperty Name="ID_USER_TEST" ColumnName="ID_USER_TEST" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ANSWER_MULTICHOICE">
+            <EntityTypeMapping TypeName="UMC_TESTModel.ANSWER_MULTICHOICE">
+              <MappingFragment StoreEntitySet="ANSWER_MULTICHOICE">
+                <ScalarProperty Name="CORRECT_ANSWER" ColumnName="CORRECT_ANSWER" />
+                <ScalarProperty Name="ANSWER" ColumnName="ANSWER" />
+                <ScalarProperty Name="NO" ColumnName="NO" />
+                <ScalarProperty Name="ID_QUESTION" ColumnName="ID_QUESTION" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QUESTIONs">
+            <EntityTypeMapping TypeName="UMC_TESTModel.QUESTION">
+              <MappingFragment StoreEntitySet="QUESTION">
+                <ScalarProperty Name="TYPE_QUESTION" ColumnName="TYPE_QUESTION" />
+                <ScalarProperty Name="ID_EXAM" ColumnName="ID_EXAM" />
+                <ScalarProperty Name="DateCreate" ColumnName="DateCreate" />
+                <ScalarProperty Name="Question1" ColumnName="Question" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

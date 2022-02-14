@@ -24,9 +24,11 @@ namespace UMCFormTest.Database
         public string Question1 { get; set; }
         public System.DateTime DateCreate { get; set; }
         public int ID_EXAM { get; set; }
+        public string TYPE_QUESTION { get; set; }
     
         public virtual EXAM EXAM { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<USER_TEST_DETAIL> USER_TEST_DETAIL { get; set; }
+        public List<ANSWER_MULTICHOICE> LIST_ANSWER { get; set; }
     }
 }
